@@ -1,7 +1,12 @@
+
+LC_CTYPE=C
+LANG=C
+
 # Select your assembler:
-Z80_ASSEMBLER?=pasmo
+#Z80_ASSEMBLER?=pasmo
 #Z80_ASSEMBLER?=z80-as
 #Z80_ASSEMBLER?=sjasm
+Z80_ASSEMBLER?=sjasmplus
 #Z80_ASSEMBLER?=tniasm
 
 PACKAGE_NAME:=cbios
@@ -53,6 +58,11 @@ $(ROMS_FULLPATH): derived/bin/cbios_%.rom: vdep/%.asm
 ifeq ($(Z80_ASSEMBLER),sjasm)
 	@sjasm -iderived/asm -l $(<:vdep/%=src/%) $@ $(@:derived/bin/%.rom=derived/lst/%.lst)
 endif
+
+ifeq ($(Z80_ASSEMBLER),sjasmplus)
+	@cd src && sjasmplus -i../derived/asm $(<:vdep/%=%) --raw=../$@ --lst=$(@:derived/bin/%.rom=../derived/lst/%.lst) --nologo 
+endif
+
 ifeq ($(Z80_ASSEMBLER),pasmo)
 	@$(PASMO) -I src -I derived/asm $(<:vdep/%=src/%) \
 		$@ $(@:derived/bin/%.rom=derived/lst/%.lst)

@@ -1,3 +1,4 @@
+; $Id: video.asm 590 2011-01-09 09:54:50Z bifimsx $
 ; C-BIOS video routines
 ;
 ; Copyright (c) 2002-2005 BouKiCHi.  All rights reserved.
@@ -61,14 +62,14 @@ enascr:
 ; Output   : RG0SAV(F3DF)-RG7SAV(F3E6)
 ; Registers: AF, BC
 wrtvdp:
-                di
                 res     7,c             ; fixes High Way Star
                 ld      a,b
+                di
                 out     (VDP_ADDR),a
                 ld      a,c
                 or      $80
-                out     (VDP_ADDR),a
                 ei
+                out     (VDP_ADDR),a
 
                 push    hl
                 ld      hl,RG0SAV
@@ -108,6 +109,10 @@ wrtvdp_nosav:
 ; Registers: AF
 rdvrm:
                 call    setrd
+        IF VDP = TMS99X8
+;		or	0		; Delay
+		nop
+	ENDIF
                 in      a,(VDP_DATA)
                 ret
 
@@ -143,8 +148,8 @@ setrd:
                 out     (VDP_ADDR),a
                 ld      a,h
                 and     $3F
-                out     (VDP_ADDR),a
                 ei
+                out     (VDP_ADDR),a
                 ret
 
 ;--------------------------------
@@ -208,6 +213,9 @@ filvrm_cont:
                 ;       memory block written is large enough.
 filvrm_lp:
                 out     (VDP_DATA),a
+        IF VDP = TMS99X8
+                nop
+	ENDIF
                 djnz    filvrm_lp
                 dec     c
                 jr      nz,filvrm_lp
@@ -244,9 +252,14 @@ ldirmv_cont:
                 inc     a
                 ld      c,VDP_DATA
 ldirmv_lp:
+        IF VDP = TMS99X8
+		ini
+		jp	nz,ldirmv_lp
+	ELSE
                 inir
+	ENDIF
                 dec     a
-                jr      nz,ldirmv_lp
+                jp      nz,ldirmv_lp
                 pop     hl
                 ret
 
@@ -280,9 +293,14 @@ ldirvm_cont:
                 inc     a
                 ld      c,VDP_DATA
 ldirvm_lp:
+        IF VDP = TMS99X8
+		outi
+		jp	nz,ldirvm_lp
+	ELSE
                 otir
+	ENDIF ; VDP = TMS99X8
                 dec     a
-                jr      nz,ldirvm_lp
+                jp      nz,ldirvm_lp
                 ; Note: Without this, Quinpl shows glitches.
                 ; TODO: Investigate why.
                 ex      de,hl
