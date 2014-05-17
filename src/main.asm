@@ -60,9 +60,9 @@ COMPILE_FONT:   equ     YES
                 ds      $0006 - $
 
 ; $0006 VDP.DR  Base port address for VDP data read
-vdp_dr:         db      VDP_DATA        ; VDP read port
+vdp_dr:         db      VDP_DATA_R        ; VDP read port
 ; $0007 VDP.WR  Base port address for VDP data write
-vdp_dw:         db      VDP_DATA        ; VDP write port
+vdp_dw:         db      VDP_DATA_W        ; VDP write port
 
 ; $0008 SYNCHR
                 ds      $0008 - $
@@ -617,7 +617,7 @@ romid:
 
 ; -------------------
 
-                ds      $0200 - $
+                ds      $0200 - $,$C9
 
                 include "util.asm"
                 ;include "slot.asm"
@@ -655,7 +655,7 @@ chkram:
                 ld      a,$82
                 out     (PPI_REGS),a
                 ld      a,$50
-                out     (GIO_REGS),a
+                out     (GIO_REGS_W),a
 
                 ; Initialize memory bank
                 xor     a
@@ -817,12 +817,12 @@ logo_done:
                 or      $40
                 out     (VDP_ADDR),a
                 ld      a,$76
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 xor     a
                 out     (VDP_ADDR),a
                 ld      hl,MODE
                 out     (VDP_ADDR),a
-                in      a,(VDP_DATA)
+                in      a,(VDP_DATA_R)
                 cp      $76
                 jr      z,vramsize_128K
                 set     1,(hl)
@@ -1757,9 +1757,9 @@ lptout_write:
                 push    af
                 out     (PRN_DATA),a
                 ld      a,0
-                out     (PRN_STAT),a
+                out     (PRN_STAT_W),a
                 cpl
-                out     (PRN_STAT),a
+                out     (PRN_STAT_W),a
                 pop     af
                 and     a
                 ret
@@ -1773,7 +1773,7 @@ lptout_write:
 
 lptstt:
                 call    H_LPTS
-                in      a,(PRN_STAT)
+                in      a,(PRN_STAT_R)
                 rra
                 rra
                 ld      a,$FF
@@ -1840,18 +1840,18 @@ cnvchr_normal_exit:
 ; Output:  CF set if CTRL-STOP is pressed
 ; Changes: AF
 breakx:
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 and     $F0
                 or      $07
-                out     (GIO_REGS),a
+                out     (GIO_REGS_W),a
                 in      a,(KBD_STAT)
                 and     $10             ; check STOP, also resets CF
                 ret     nz              ; some programs like to return with $10
 
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 and     $F0
                 or      $06
-                out     (GIO_REGS),a
+                out     (GIO_REGS_W),a
                 in      a,(KBD_STAT)
                 and     $02             ; check CTRL, also resets CF
                 ret     nz
@@ -1899,7 +1899,7 @@ beep:
                 call    print_debug
                 pop     af
                 pop     hl
-                ret
+                jp	gicini
 beep_text:      db      "BEEP",0
 
 ;--------------------------------
@@ -2090,7 +2090,7 @@ tapoof_text:    db      "TAPOOF",0
 stmotr:
                 push    bc
                 ld      b,a
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 inc     b
                 jr      z,stmotr_inv
                 set     4,a
@@ -2103,7 +2103,7 @@ stmotr:
                 ret
 
 stmotr_inv:     xor     16
-stmotr_set:     out     (GIO_REGS),a
+stmotr_set:     out     (GIO_REGS_W),a
                 pop     bc
                 ret
 
@@ -2112,6 +2112,8 @@ stmotr_set:     out     (GIO_REGS),a
 ; Function : Initialises PSG and sets initial value for the PLAY statement
 ; Registers: All
 gicini:
+		push	af
+		push	de
                 ld      e,$00
                 ld      a,$08
                 call    wrtpsg
@@ -2125,6 +2127,8 @@ gicini:
                 ld      a,$07
                 call    wrtpsg
 
+		pop	de
+		pop	af
                 ret
 
 ;--------------------------------
@@ -2189,15 +2193,6 @@ wslreg:
                 ret
 
 ;--------------------------------
-; $013E RDVDP
-; Function : Reads VDP status register
-; Output   : A  - Value which was read
-; Registers: A
-rdvdp:
-                in      a,(VDP_STAT)
-                ret
-
-;--------------------------------
 ;0141h SNSMAT
 ; Function : Returns the value of the specified line from the keyboard matrix
 ; Input    : A  - for the specified line
@@ -2207,10 +2202,10 @@ snsmat:
                 di
                 push bc
                 ld      c,a
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 and     $F0
                 or      c
-                out     (GIO_REGS),a
+                out     (GIO_REGS_W),a
                 in      a,(KBD_STAT)
                 pop bc
                 ei
@@ -2531,11 +2526,11 @@ calc_queue_address:
 ; Registers: AF
 chgcap:
                 or      a
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 res     6,a
                 jr      nz,chgcap_on
                 set     6,a
-chgcap_on:      out     (GIO_REGS),a
+chgcap_on:      out     (GIO_REGS_W),a
                 ret
 
 ;--------------------------------
@@ -2722,14 +2717,14 @@ nmi:
 ;--------------------------------
 ; Get buffer from keyboard input
 key_in:
-                in      a,(GIO_REGS)
+                in      a,(GIO_REGS_R)
                 and     $F0
                 ld      c,a
                 ld      b,$0B
                 ld      hl,NEWKEY
 key_in_lp:
                 ld      a,c
-                out     (GIO_REGS),a
+                out     (GIO_REGS_W),a
                 in      a,(KBD_STAT)
                 ld      (hl),a
                 inc     hl
@@ -3042,7 +3037,7 @@ print_error:
                 ld      bc,$0800
 lp_clearmem:
                 xor     a
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 dec     bc
                 ld      a,b
                 or      c
@@ -3052,7 +3047,7 @@ lp_clearmem:
                 ld      bc,$0800
 lp_fontset:
                 ld      a,(hl)
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     hl
                 dec     bc
                 ld      a,b
@@ -3069,7 +3064,7 @@ lp_fontset:
 
                 ld      a,(hl)
 lp_errprn:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     hl
                 ld      a,(hl)
                 and     a
@@ -3077,7 +3072,7 @@ lp_errprn:
 
                 ld      a,(de)
 lp_strprn:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     de
                 ld      a,(de)
                 and     a
@@ -3099,7 +3094,7 @@ vram_clear:     xor     a
 
                 ld      bc,$4000
 vram_clear_lp:  xor     a
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 dec     bc
                 ld      a,b
                 or      c

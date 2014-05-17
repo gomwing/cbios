@@ -113,7 +113,7 @@ rdvrm:
 ;		or	0		; Delay
 		nop
 	ENDIF
-                in      a,(VDP_DATA)
+                in      a,(VDP_DATA_R)
                 ret
 
 
@@ -127,7 +127,7 @@ wrtvrm:
                 push    af
                 call    setwrt
                 pop     af
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 ret
 
 ;--------------------------------
@@ -212,7 +212,7 @@ filvrm_cont:
                 ;       comes just after our RET, which is certain if the
                 ;       memory block written is large enough.
 filvrm_lp:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
         IF VDP = TMS99X8
                 nop
 	ENDIF
@@ -250,7 +250,7 @@ ldirmv_cont:
                 ld      a,b
                 ld      b,c
                 inc     a
-                ld      c,VDP_DATA
+                ld      c,VDP_DATA_R
 ldirmv_lp:
         IF VDP = TMS99X8
 		ini
@@ -291,7 +291,7 @@ ldirvm_cont:
                 ld      a,b
                 ld      b,c
                 inc     a
-                ld      c,VDP_DATA
+                ld      c,VDP_DATA_W
 ldirvm_lp:
         IF VDP = TMS99X8
 		outi
@@ -448,7 +448,7 @@ chgclr:
                 call    setwrt
 cclr_lp:
                 pop     af
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 push    af
                 dec     bc
                 ld      a,b
@@ -531,11 +531,11 @@ clrspr_attr_spritemode_start:
                 di
 clrspr_attr_lp:
                 ld      a,e
-                out     (VDP_DATA),a    ; Y coordinate
+                out     (VDP_DATA_W),a    ; Y coordinate
                 ld      a,0
-                out     (VDP_DATA),a    ; X coordinate
+                out     (VDP_DATA_W),a    ; X coordinate
                 ld      a,c
-                out     (VDP_DATA),a    ; pattern number
+                out     (VDP_DATA_W),a    ; pattern number
                 inc     c
                 call    gspsiz
                 jr      nc,clrspr_attr_8
@@ -544,7 +544,7 @@ clrspr_attr_lp:
                 inc     c
 clrspr_attr_8:
                 ld      a,d
-                out     (VDP_DATA),a    ; color
+                out     (VDP_DATA_W),a    ; color
                 djnz    clrspr_attr_lp
                 ei
                 ret
@@ -691,7 +691,7 @@ inigrp:
                 xor     a
                 di
 inigrp_lp:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     a
                 jr      nz,inigrp_lp
                 djnz    inigrp_lp
@@ -750,7 +750,7 @@ inimlt_loop2:
                 push    af
                 ld      b,32
 inimlt_loop3:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     a
                 djnz    inimlt_loop3
                 pop     af
@@ -1326,6 +1326,15 @@ grpprt_sft_ed:
 grpprt_text:    db      "GRPPRT",0
 
 ;--------------------------------
+; $013E RDVDP
+; Function : Reads VDP status register
+; Output   : A  - Value which was read
+; Registers: A
+rdvdp:
+                in      a,(VDP_STAT)
+                ret
+
+;--------------------------------
 ; 0165h CHKNEW
 ; Is the current screen mode a bitmap mode?
 ; Output:  Carry flag set if current screen mode is SCREEN 5 or higher.
@@ -1356,7 +1365,7 @@ bigfil:
                 pop     af
                 di
 bigfil_lp:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 djnz    bigfil_lp
                 dec     c
                 jr      nz,bigfil_lp
@@ -1442,7 +1451,7 @@ nset_32k:       push    hl
 ; Output:   A = the byte read
 nrdvrm:
                 call    nsetrd
-                in      a,(VDP_DATA)
+                in      a,(VDP_DATA_R)
                 ret
 
 ;--------------------------------
@@ -1457,7 +1466,7 @@ nwrvrm:
                 push    af
                 call    nsetwr
                 pop     af
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 ret
 
 
@@ -1609,7 +1618,7 @@ init_sc4:
                 xor     a
                 di
 init_sc4_lp:
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     a
                 jr      nz,init_sc4_lp
                 djnz    init_sc4_lp

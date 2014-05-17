@@ -836,7 +836,7 @@ iniplt:
                 ld      b,32
                 ld      hl,palette_vram_init
 iniplt_loop:    ld      a,(hl)
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 inc     hl
                 out     (VDP_PALT),a
                 djnz    iniplt_loop
@@ -855,7 +855,7 @@ rstplt:
                 ld      bc,16
                 call    wrtvdp          ; set palette index
                 ld      b,32
-rstplt_loop:    in      a,(VDP_DATA)
+rstplt_loop:    in      a,(VDP_DATA_R)
                 out     (VDP_PALT),a
                 djnz    rstplt_loop
                 ret
@@ -877,9 +877,9 @@ getplt:
                 ld      b,0
                 add     hl,bc
                 call    nsetrd
-                in      a,(VDP_DATA)
+                in      a,(VDP_DATA_R)
                 ld      b,a
-                in      a,(VDP_DATA)
+                in      a,(VDP_DATA_R)
                 ld      c,a
                 pop     hl
                 ret
@@ -909,10 +909,10 @@ setplt:
                 pop     bc
                 pop     af
                 out     (VDP_PALT),a    ; set red and blue
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 ld      a,e
                 out     (VDP_PALT),a    ; set green
-                out     (VDP_DATA),a
+                out     (VDP_DATA_W),a
                 ret
 ;
 ; internal - get palette base address from screen mode

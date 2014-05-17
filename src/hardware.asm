@@ -34,14 +34,16 @@
 DBG_CTRL:       equ     $2E             ; openMSX debugdevice control (mode)
 DBG_DATA:       equ     $2F             ; openMSX debugdevice data
 
-PRN_STAT:       equ     $90             ; printer status
+PRN_STAT_R:     equ     $90             ; printer status (read)
+PRN_STAT_W:     equ     $90             ; printer status (write)
 PRN_DATA:       equ     $91             ; printer data
 
-VDP_DATA:       equ     $98             ; VDP data port (VRAM read/write)
-VDP_ADDR:       equ     $99             ; VDP address (write only)
-VDP_STAT:       equ     $99             ; VDP status (read only)
-VDP_PALT:       equ     $9A             ; VDP palette latch (write only)
-VDP_REGS:       equ     $9B             ; VDP register access (write only)
+VDP_DATA_R:     equ     $98             ; VDP data port (VRAM read/write)
+VDP_DATA_W:     equ     $98             ; VDP data port (VRAM read/write)
+VDP_ADDR:       equ     VDP_DATA_W+1      ; VDP address (write only)
+VDP_STAT:       equ     VDP_DATA_R+1
+VDP_PALT:       equ     VDP_DATA_W+2      ; VDP palette latch (write only)
+VDP_REGS:       equ     VDP_DATA_W+3      ; VDP register access (write only)
 
 PSG_REGS:       equ     $A0             ; PSG register write port
 PSG_DATA:       equ     $A1             ; PSG value write port
@@ -49,7 +51,8 @@ PSG_STAT:       equ     $A2             ; PSG value read port
 
 PSL_STAT:       equ     $A8             ; slot status
 KBD_STAT:       equ     $A9             ; keyboard status
-GIO_REGS:       equ     $AA             ; General IO Register
+GIO_REGS_R:     equ     $AA             ; General IO Register (read)
+GIO_REGS_W:     equ     $AA             ; General IO Register (write)
 PPI_REGS:       equ     $AB             ; PPI register
 
 RTC_ADDR:       equ     $B4             ; RTC address

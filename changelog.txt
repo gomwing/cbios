@@ -1,0 +1,16 @@
+
+v0.26 alpha1
+
+- Fixed all timings so it now works properly on a real MSX1 (TMS9918)
+- Added support for SjasmPlus on Makefile
+- Moved rdvdp from main.asm to video.asm
+- Fixed gicini to push/pop AF and DE
+- beep now jumps to gicini as it should
+- Added IM1 to the initialization routine
+
+- Added Nyyrikki fixes
+  - Filled the end of the main.asm jump table with RET instructions
+  - VDP_DATA I/O pointer was split into VDP_DATA_R and VDP_DATA_W
+  - PRN_STAT I/O pointer was split into PRN_STAT_R and PRN_STAT_W
+  - GIO_REGS I/O pointer was split into GIO_REGS_R and GIO_REGS_W
+
