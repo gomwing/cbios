@@ -146,8 +146,15 @@ romid:
                 ds      $0030 - $
                 jp      callf
 
+		ds	$0034 - $
+; Kanji driver defaults
+                db	0	; 0=Disabled, 128=Kanji Driver enabled on boot
+                db	0	; ?
+                db	0	; ?
+                db	0	; ?
+
+
 ; $0038 KEYINT   Interrupt routines(RST38,VBlank,Timer...)
-                ds      $0038 - $
                 jp      keyint
 
 ; $003B INITIO  Initialize I/O
@@ -843,7 +850,7 @@ vramsize_done:
         IF VDP != TMS99X8
                 call    vram_clear
         ENDIF
-
+		
                 ld      a,COLOR_BORDER
                 ld      (BDRCLR),a
                 ld      a,COLOR_BACK
@@ -873,8 +880,11 @@ vramsize_done:
                 ; TODO: Find out or invent name for $FB29.
                 ld      ($FB29),a
 
+		call	cls
+
                 ; This is the hook the disk ROM uses for booting.
                 call    H_RUNC
+
 
 ; We couldn't boot anything, instead show disk contents.
 ; TODO: This breaks boot of MG2, so disabled for now.
@@ -1000,12 +1010,12 @@ search_roms_init_skip:
                 ; By postponing the interrupt as long as possible,
                 ; there is a better chance they will boot correctly.
                 ; For example the game "Koronis Rift" depends on this.
-search_roms_init_waitv:
-                in      a,($99)
-                or      a
-                jp      m,search_roms_init_waitv
                 push    af
                 push    hl
+search_roms_init_waitv:
+                call	rdvdp
+                add	a,a
+                jr      nc,search_roms_init_waitv
                 call    calslt
                 di
                 pop     hl
@@ -1690,19 +1700,22 @@ chsns_inbuf:
 
 chget:
                 call    H_CHGE
-                push    hl
+		push	bc
                 push    de
+                push    hl
+		call	chget_restore_cursor
 chget_wait:
-                ld      hl,(GETPNT)
-                ld      de,(PUTPNT)
-                rst     $20
+                ld      de,(GETPNT)
+                ld      hl,(PUTPNT)
+                rst     $20		; DCOMPR
                 jr      nz,chget_char
                 ei
                 halt
                 jr      chget_wait
 chget_char:
-                ld      a,(hl)          ; HL = (GETPNT)
-                push    af
+		call	chget_remove_cursor
+		ex	de,hl
+                ld      e,(hl)          ; HL = (GETPNT)
                 inc     hl
                 ; See comment in keyint (below label key_store).
                 ld      a,l
@@ -1714,9 +1727,10 @@ chget_char:
                 ld      hl,KEYBUF
 chget_nowrap:
                 ld      (GETPNT),hl
-                pop     af
-                pop     de
+                ld	a,e
                 pop     hl
+                pop     de
+		pop	bc
                 ret
 
 ;--------------------------------
@@ -1893,14 +1907,28 @@ ckcntc:
 beep:
 ; Note: Called by CHPUT; if you need to change more regs than AF, HL, DE, BC
 ;       then update CHPUT.
-                push    hl
-                push    af
-                ld      hl,beep_text
-                call    print_debug
-                pop     af
-                pop     hl
+;                ld      hl,beep_text
+ ;               call    print_debug
+
+		xor	a
+		ld	e,$55
+		call	wrtpsg
+		inc	a
+		ld	e,0
+		call	wrtpsg
+		ld	a,7
+		ld	e,$BE
+		call	wrtpsg
+		inc	a
+		ld	e,15
+		call	wrtpsg
+		ld	b,5
+beep_wait:
+		halt
+		djnz	beep_wait
+
                 jp	gicini
-beep_text:      db      "BEEP",0
+;beep_text:      db      "BEEP",0
 
 ;--------------------------------
 ; $00C6 POSIT
@@ -2368,28 +2396,29 @@ gttrig_space:
 
 ; Joystick triggers
 joy_trig:
-                di
                 dec     a
                 push    de
                 ld      e,$03   ; enable trig A+B of stick 1
-                ld      b,a
-                and     $01
-                jr      z,sel_trig1
+                ld      b,a	; b=joyport & button selector
+                and     $01	; Joyport 1?
+                jr      z,sel_trig1	; Yes, skip
                 ld      e,$4C   ; enable trig A+B of stick 2 and select stick 2
 sel_trig1:
                 ld      a,$0F
+                di
                 call    rdpsg
+		ei
                 and     $BF
                 or      e
                 ld      e,a
                 ld      a,$0F
                 call    wrtpsg
 
-                ld      a,b
-                ld      b,$10
+                ld      a,b	; a=joyport selector
+                ld      b,$10	; Mask for trigger-1
                 and     $02
                 jr      z,istrg_a
-                ld      b,$20
+                ld      b,$20	; Mask for trigger-2
 istrg_a:
                 ld      a,$0E
                 di
@@ -2397,10 +2426,9 @@ istrg_a:
                 ei
                 pop     de
                 and     b
-                jr      z,trig_on
-                jr      trig_off
+                jr      nz,trig_off
 trig_on:
-                ld      a,$FF
+		dec	a	; 0-1=255, and sets flag-Z accordingly
                 ret
 trig_off:
                 xor     a
@@ -2971,15 +2999,9 @@ stack_error:
 ; Output   : Depends on the called routine
 ; Registers: Depends on the called routine
 calbas:
-                push    hl
-                push    af
-                ld      hl,calbas_text
-                call    print_debug
-                pop     af
-                pop     hl
-                ld      de,str_no_basic_intr
-                jp      print_error
-calbas_text:    db      "CALBAS",0
+		ld	iy,(EXPTBL-1)
+		jp	calslt
+
 
         IF MODEL_MSX != MODEL_MSX1
 ;--------------------------------
@@ -3124,7 +3146,20 @@ str_slot:
 
 str_basic:
                 ;       [01234567890123456789012345678]
-                db      "Cannot execute a BASIC ROM.",$0D,$0A,$00
+                db      "Cannot execute a BASIC cartridge.",$0D,$0A,$00
+
+str_inibas_no_basic:
+		db	$0D,30,$1B,"K"	; Clear the Disk-BASIC message. 
+					; Otherwise the user may get confused
+					; about the presence of a BASIC
+		db	"BASIC interpreter not available.",$00
+str_inibas_loadsys:
+		db	$0D,$0A,"Booting disk...",$0D,$0A,$00
+
+str_insert_system_disk:
+		db	$0C,"No bootable drive found.",$0D,$0A,$0A
+		db	"Please insert a bootable",$0D,$0A
+		db	"disk and press a key.",$00
 
 ;-------------------------------------
 ; error messages
@@ -3135,7 +3170,9 @@ str_memory_err:
                 db      "MEMORY NOT FOUND.",$00
 
 str_no_basic_intr:
-                db      "CALLED NON EXISTING BASIC.",$00
+                db      "BASIC INTERPRETER NOT AVAILABLE",$0D,$0A
+		db	"AND NO OPERATING SYSTEM FOUND",$0D,$0A,$0A
+		db	"SYSTEM HALTED.",$00
 
 str_stack_error:
                 db      "STACK ERROR.",$00
@@ -3183,6 +3220,108 @@ vdp_bios:
 
                 include "statements.asm"
 
+
+; Catch-all unknown calls to undocumented addresses before it
+                ds      $4000 -$32 - $
+                push    hl
+                push    af
+                ld      hl,catchall_text
+                call    print_debug
+                pop     af
+                pop     hl
+                ret
+catchall_text:   db      "Catch-all Incorrect BIOS address call.",0
+
+
+
+;========================  Frame-2 =================================
+; Contains known MSX-BASIC entry points and the minimally needed routines
+; All routine names given here are unnoficial, since there's no documentation
+; about it.
+
+
+		ds	$4173 - $,0
+;------------------------------------
+; $4173 INIBAS
+; DiskBIOS BASENT ($4022) jumps to this point of the BASIC interpreter
+; to boot it.
+
+		; Will just call the hooks that any games/utils may use,
+		; in the same sequence that the BASIC would call them
+		call	H_DIRD
+		call	H_GONE
+		call	H_CHRG
+		call	H_RUNC
+		call	H_CLEA
+		call	H_LOPD
+		call	H_STKE
+
+;		; If none of the hooks were used, then abort with error
+;		ld      de,str_no_basic_intr
+;		jp      print_error
+
+		ld	a,(H_PHYD)
+		cp	$C9		; Is there a disk interface available?
+		jr	z,inibas_nodisk ; No, skip
+
+		; ==Try to call the operating system back==
+
+		; Check if this is a retry or not
+		ld	a,(RAMAD0)
+		ld	hl,$0005
+		call	rdslt
+		cp	$C3		; BDOS handler present?
+		jr	nz,inibas_ask4sys	; No. This disk had no O.S. 
+
+		; Inform that there's no BASIC present, and boot the system
+		; directly
+                ld      hl,str_inibas_no_basic
+                call    prn_text
+		jr	inibas_loadsys
+
+inibas_ask4sys:
+		; Print the "Please insert a system disk" message
+		; And wait for a key
+                ld      hl,str_insert_system_disk
+                call    prn_text
+		call	chget
+
+inibas_loadsys:
+		ld	a,1
+		ld	(DSKSYS),a	; DiskBIOS1 needs this to allow
+					; a disk to boot
+		ld	a,(RAMAD0)
+		ld	e,$C9
+		ld	hl,$0005
+		call	wrslt		; Clear the old BDOS handler
+
+                ld      hl,str_inibas_loadsys
+                call    prn_text
+		ld	hl,inibas_system
+		ld	de,PROCNM
+		ld	bc,7
+		ldir
+		ld	a,(DSKRSLT)	; Get the master DiskBIOS slot
+		ld	hl,$4004	; Get STTMNT handler
+		call	rdslt
+		ld	ixl,a
+		inc	hl
+		ld	a,($F348)	; Get the master DiskBIOS slot
+		call	rdslt
+		ld	ixh,a
+		ld	iy,($F348-1)	; Get the master DiskBIOS slot
+		call	calslt
+
+inibas_nodisk:
+		; If none of the ways to continue processing worked, abort with
+		; error
+		ld      de,str_no_basic_intr
+		jp      print_error
+
+inibas_system:	db	"SYSTEM",0
+
+
+
 ; FM Music Macro is calling the routine(seems to display message).
 ; in : HL(an address of string with null termination)
                 ds      $6678 - $
@@ -3215,13 +3354,22 @@ unk7D17_text:   db      "unknown@7D17",0
                 ds      $7D2F - $
                 dw      call_sdfscr
 
-; NMS8250 disk ROM can call to this address.
+;------------------------------------
+; $7D31 SETSCR
+; Set the screen mode & colors and prints the well known MSX-BASIC welcome
+; message, with version, copyright message and the amount of free memory.
+; On MSX2 it was moved to the subROM.
                 ds      $7D31 - $
-; Restore screen parameters from RTC and print welcome message.
-                ld      ix,$0189        ; SETSCR
-                call    extrom
-                ; Print BASIC copyright message.
-                ret
+		; Restore screen parameters from RTC and print welcome message.
+;		ld      ix,$0189	; SETSCR
+;		call    extrom
+                ; Would print BASIC copyright message here instead that on
+		; SETSCR just to simplify things, as the subROM has no
+		; prn_text routine yet
+                ld      hl,str_proginfo
+                call    prn_text
+		call	H_OUTD
+		ret
 
 ; NMS8250 disk ROM calls to this address.
 ; Restore screen parameters from RTC.

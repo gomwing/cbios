@@ -72,14 +72,30 @@
 ; $4110 WRTOPL
 ; Writes data to OPLL register.
 wrtopl:
-                push    hl
-                push    af
-                ld      hl,wrtopl_text
-                call    print_debug
-                pop     af
-                pop     hl
-                ret
-wrtopl_text:    db      "music: WRTOPL ($4410) called",0
+
+;	PUSH	BC
+;	OUT	(7CH),A
+;	PUSH	AF
+;	LD	B,1
+;	CALL	WAITOPL			; wait for OPLL
+;	LD	A,E
+;	OUT	(7DH),A
+;	LD	B,6
+;	CALL	WAITOPL			; wait for OPLL
+;	POP	AF
+;	POP	BC
+;	RET
+
+		out	($7C),a
+		push	af
+		ld	a,e
+		out	($7D),a
+		pop	af
+		ex	(sp),hl
+		ex	(sp),hl
+		ex	(sp),hl
+		ex	(sp),hl
+		ret
 
 ;--------------------------------
 ; $4113 INIOPL

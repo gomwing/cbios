@@ -1015,13 +1015,19 @@ sdfscr_text:    db      "SDFSCR",0
 ; Registers: All
 ; NOTE: this implementation is still a stub!
 setscr:
-                push    hl
-                push    af
+		; TODO: Read all values from the RTC
+                ld      a,7
+                ld      (BDRCLR),a
+                ld      a,4
+                ld      (BAKCLR),a
+                ld      a,15
+                ld      (FORCLR),a
+                ld      a,29
+                ld      (LINL32),a
+                call    init32
+
                 ld      hl,setscr_text
-                call    print_debug
-                pop     af
-                pop     hl
-                ret
+                jp    print_debug
 setscr_text:    db      "SETSCR",0
 
 ;

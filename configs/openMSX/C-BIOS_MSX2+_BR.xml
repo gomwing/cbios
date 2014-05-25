@@ -59,7 +59,7 @@
             <filename>cbios_music.rom</filename>
           </rom>
           <sound>
-            <volume>9000</volume>
+            <volume>20000</volume>
           </sound>
         </MSX-MUSIC>
       </secondary>

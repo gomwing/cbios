@@ -36,6 +36,37 @@
 ;-------------------
 ; Note: Functions defined in "main.asm" are disabled here.
 
+
+;----------------------
+; DiskBIOS parameter area
+;----------------------
+
+DISKVE	equ	0F323h	; Pointer to the pointer for the disk error
+			; handling routine. This error handling routine must
+		; Error handling routine receives:
+		;	C: Error code:
+		;        X x x x X X X X
+		;        ¦       ¦ ¦ ¦ ¦
+		;        ¦       ¦ ¦ ¦ +------------ 1 - Writing / 0 - Reading
+		;        ¦       ¦ ¦ +----- 0 1 1 #
+		;        ¦       ¦ +------- 0 0 0 #- Disk error (other)
+		;        ¦       +--------- 1 0 1 #
+		;        ¦                  ¦ ¦ +--- Unsupported media
+		;        ¦                  ¦ +----- Not ready
+		;        ¦                  +------- Write protect
+		;        +-------------------------- 1 - Bad FAT
+		; And must return register C: 0=Ignore, 1=Retry, 2=Abort
+
+BREAKV		equ	$F325	; DEFS 2 
+RTCFOUND	equ	$F338	; NZ = Found
+RAMAD0		equ	$F341
+RAMAD1		equ	$F342
+RAMAD2		equ	$F343
+RAMAD3		equ	$F344
+DSKSYS		equ	$F346
+DSKRSLT		equ	$F348
+
+;----------------------
 ; F380-F384: interslot read
 ;RDPRIM          equ     $F380
 

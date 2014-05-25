@@ -486,6 +486,7 @@ chput_remove_cursor:
                 ld      a,(CSRSW)               ; Cursor visible?
                 cp      1
                 ret     nz
+chget_remove_cursor:
                 ld      a,(SCRMOD)              ; Are we in text mode?
                 cp      2
                 ret     nc
@@ -499,6 +500,7 @@ chput_restore_cursor:
                 ld      a,(CSRSW)               ; Cursor visible?
                 cp      1
                 ret     nz
+chget_restore_cursor:
                 ld      a,(SCRMOD)
                 cp      2
                 ret     nc
@@ -522,6 +524,10 @@ chput_restore_cursor:
                 jr      nz,chput_restore_cursor_t32
 
                 ld      hl,(TXTCGP)
+		ld	a,(LINLEN)
+		cp	41
+                jr	c,chput_restore_cursor_getpattern
+		add	hl,hl
                 jr      chput_restore_cursor_getpattern
 
 chput_restore_cursor_t32:

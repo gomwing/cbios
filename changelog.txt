@@ -1,4 +1,43 @@
 
+
+v0.26 alpha2
+
+- Fixed GTTRIG to return flag-Z correctly for the joystick ports
+- Added a catch all routine to report illegal direct calls made to the end of
+  the frame-1.
+- Fixed a bug in search_roms_init_waitv that caused it to corrupt the current
+  slot number, thus causing the diskROM to fail to boot.
+- Implemented the BEEP (00C0h) routine
+- Fixed CHGCLR to set the colors correcly for all screen modes
+- CHPUT now shows the cursor when prompting for a character
+- Fixed a bug in chget_restore_cursor that resulted in a corrupted cursor
+  bitmap. 
+- The screen is now cleared before booting a disk
+- A lot of polishing was made to support stable operation without a BASIC
+  interpreter.  Many of the solutions came from observing how the BASIC
+  interpreter was removed from the ROM of the IBM-PCs back in the days.
+  Instead of just aborting with error, C-BIOS will now try it's best to
+  allow the processing to continue:
+  1) It will call all the hooks that the BASIC would call, in the same sequence.
+     This way any programs that called the BASIC and used hooks to be called
+     back will work properly
+  2) If none of the hooks are used, and there is a disk interface available,
+     C-BIOS will politely issue a message about the lack of BASIC interpreter
+     and will load the operating system again. This allows programs like
+     MEMMAN to work. It will ask endlessly to retry if the operating system
+     loading failed.
+  3) If none of the options above worked, it will abort with an error informing
+     that there's no BASIC or operating system to run.
+- Booting disks now work properly with an external disk interface. Tested and
+  worked fine with MSX-DOS, MSX-DOS2 and Nextor. Disk games also work.
+- Solved the bug that caused SjASMPlus to generate incomplete logo files: The
+  INCBIN directive requires all parameters to work properly.
+- Implemented MSX-Music's WRTOPL, so games that use this BIOS routine to write
+  in the YM2413 chip will now play music fine.
+- Adjusted the MSX-Music volume in the openMSX config files to sound closer to
+  the Sony MSX2+ machines.
+- Added information about the MainROM's 0034h: the Kanji driver defaults
+
 v0.26 alpha1
 
 - Fixed all timings so it now works properly on a real MSX1 (TMS9918)
@@ -7,10 +46,14 @@ v0.26 alpha1
 - Fixed gicini to push/pop AF and DE
 - beep now jumps to gicini as it should
 - Added IM1 to the initialization routine
-
-- Added Nyyrikki fixes
+- Added Nyyrikki changes to support the Spectravideo SVI-328
   - Filled the end of the main.asm jump table with RET instructions
   - VDP_DATA I/O pointer was split into VDP_DATA_R and VDP_DATA_W
   - PRN_STAT I/O pointer was split into PRN_STAT_R and PRN_STAT_W
   - GIO_REGS I/O pointer was split into GIO_REGS_R and GIO_REGS_W
+
+
+
+
+
 

@@ -39,8 +39,7 @@ disscr:
                 and     $BF
                 ld      b,a
                 ld      c,1
-                call    wrtvdp
-                ret
+                jp	wrtvdp
 
 ;--------------------------------
 ; $0044 ENASCR
@@ -51,8 +50,8 @@ enascr:
                 or      $40
                 ld      b,a
                 ld      c,1
-                call    wrtvdp
-                ret
+;                call    wrtvdp
+;                ret
 
 ;--------------------------------
 ; 0047$ WRTVDP
@@ -413,10 +412,12 @@ chgmod_finish_lp:
 ; Registers: All
 chgclr:
                 ld      a,(SCRMOD)
-                cp      8
-                jr      z,chgclr_sc8
-                dec     a
-                push    af
+		or	a		; Screen-0?
+                jr      z,chgclr_sc0	; Yes, change background color
+                cp      1		; Screen-1?
+                jr      nz,chgclr_scx	; No, just set the border color
+
+                ; SCREEN1
                 ld      a,(FORCLR)
                 rlca
                 rlca
@@ -430,10 +431,7 @@ chgclr:
                 ld      b,a
                 ld      c,7
                 call    wrtvdp
-                pop     af
-                ret     nz
 
-                ; SCREEN1
                 ld      a,(FORCLR)
                 rlca
                 rlca
@@ -457,9 +455,23 @@ cclr_lp:
                 pop     af
                 ret
 
-chgclr_sc8:
-                ; SCREEN8
+chgclr_sc0:
+                ; SCREEN0
+                ld      a,(FORCLR)
+                rlca
+                rlca
+                rlca
+                rlca
+                and     $F0
+                ld      l,a
+                ld      a,(BAKCLR)
+                or      l
+                jr      chclr_setbrd
+
+chgclr_scx:
+                ; SCREEN2-12
                 ld      a,(BDRCLR)
+chclr_setbrd:
                 ld      b,a
                 ld      c,7
                 jp      wrtvdp
@@ -819,9 +831,8 @@ settxt:
                 inc     de
                 inc     c
                 xor     a
-                call    set_base_address
+                jp    set_base_address
 
-                ret
 
 ; Switches VDP to TEXT2 mode (SCREEN 0, WIDTH 80).
         IF VDP != TMS99X8
@@ -849,9 +860,8 @@ settxt80:
                 call    set_base_address
                 inc     c
                 xor     a
-                call    set_base_address
+                jp	set_base_address
 
-                ret
         ENDIF
 
 ;------------------------------
@@ -887,9 +897,7 @@ sett32:
                 xor     a
                 call    set_base_address
                 xor     a
-                call    set_base_address
-
-                ret
+                jp	set_base_address
 
 ;------------------------------
 ; $007E SETGRP
@@ -925,9 +933,7 @@ setgrp:
                 xor     a
                 call    set_base_address
                 xor     a
-                call    set_base_address
-
-                ret
+                jp	set_base_address
 
 ;------------------------------
 ; $0081 SETMLT
@@ -963,9 +969,7 @@ setmlt:
                 xor     a
                 call    set_base_address
                 xor     a
-                call    set_base_address
-
-                ret
+                jp	set_base_address
 
 ;------------------------------
 ; Get an address from a base address table, convert it into a register value,

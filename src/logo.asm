@@ -349,7 +349,7 @@ logo_width:     equ     $ - logo_names
                 db      $D1,$C2,$D2,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$E4
                 db      $D3,$D4,$D5,$D6,$D7,$D8,$D9,$DA,$DB,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C,$8C
                 db      "V"
-                incbin  "../version.txt"
+                incbin  "../version.txt",0,4
                 db      $E4
                 db      $80,$DC,$DD,$DE,$C2,$DF,$E0,$E1,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E2,$E5
 logo_height:    equ     ($ - logo_names) / logo_width
@@ -624,7 +624,7 @@ glare:          dw      palette3,palette4,palette5,palette6
 ;
 logo_ver:
                 db      "V"
-                incbin  "../version.txt"
+                incbin  "../version.txt",0,4
                 db      0
 
 ;
@@ -1114,7 +1114,7 @@ glare_1:        dw      palette3_1,palette4_1,palette5_1,palette6_1
 ;
 logo_ver_1:
                 db      "V"
-                incbin  "../version.txt"
+                incbin  "../version.txt",0,4
                 db      0
 
 ;
@@ -1329,3 +1329,4 @@ msx2logodata_1:
         ENDIF
 ;
                 ds      $c000 - $,$ff
+
