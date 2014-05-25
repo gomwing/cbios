@@ -9,7 +9,7 @@ v0.26 alpha2
   slot number, thus causing the diskROM to fail to boot.
 - Implemented the BEEP (00C0h) routine
 - Fixed CHGCLR to set the colors correcly for all screen modes
-- CHPUT now shows the cursor when prompting for a character
+- CHGET now shows the cursor when prompting for a character
 - Fixed a bug in chget_restore_cursor that resulted in a corrupted cursor
   bitmap. 
 - The screen is now cleared before booting a disk
