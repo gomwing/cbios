@@ -8,6 +8,7 @@
     <release_year>2010</release_year>
     <description>An MSX2 machine using C-BIOS, with Brazillian settings, like 60Hz interrupt frequency.</description>
     <type>MSX2</type>
+    <region>br</region>
   </info>
 
   <MapperReadBackBits>largest</MapperReadBackBits>

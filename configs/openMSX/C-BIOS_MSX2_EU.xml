@@ -8,6 +8,7 @@
     <release_year>2003</release_year>
     <description>An MSX2 machine using C-BIOS, with an international keyboard layout and 50Hz interrupt frequency.</description>
     <type>MSX2</type>
+    <region>eu</region>
   </info>
 
   <MapperReadBackBits>largest</MapperReadBackBits>
@@ -85,6 +86,7 @@
       <sound>
         <volume>21000</volume>
       </sound>
+      <ignorePortDirections>true</ignorePortDirections> <!-- highest compatibility -->
     </PSG>
 
     <RTC id="Real time clock">

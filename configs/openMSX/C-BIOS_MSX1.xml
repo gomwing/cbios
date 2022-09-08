@@ -8,6 +8,7 @@
     <release_year>2003</release_year>
     <description>An MSX1 machine using C-BIOS, with an international keyboard layout and 60Hz interrupt frequency.</description>
     <type>MSX</type>
+    <region>int</region>
   </info>
 
   <CassettePort/>
@@ -68,6 +69,7 @@
       <sound>
         <volume>21000</volume>
       </sound>
+      <ignorePortDirections>true</ignorePortDirections> <!-- highest compatibility -->
     </PSG>
 
     <PrinterPort id="Printer Port">

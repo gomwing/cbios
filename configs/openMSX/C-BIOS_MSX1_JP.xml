@@ -8,6 +8,7 @@
     <release_year>2010</release_year>
     <description>An MSX1 machine using C-BIOS, with an Japanese keyboard layout and 60Hz interrupt frequency.</description>
     <type>MSX</type>
+    <region>jp</region>
   </info>
 
   <CassettePort/>
@@ -69,6 +70,7 @@
       <sound>
         <volume>21000</volume>
       </sound>
+      <ignorePortDirections>true</ignorePortDirections> <!-- highest compatibility -->
     </PSG>
 
     <PrinterPort id="Printer Port">
