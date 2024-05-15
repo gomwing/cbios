@@ -94,7 +94,7 @@ AV Control Port
 FAF7h
 AVCSAV
 1
-Copy of AV control port (#F7) content. (MSX2+~)
+Copy of AV control port (#F7) content. (MSX2+\~)
 
 CIRCLE
 ------
@@ -185,24 +185,24 @@ Screen Parameters
 |F928h  |ATRBAS |2  |Current sprite attribute table address
 |F92Ah  |CLOC   |2  |Graphic cursor location
 |F92Ch  |CMASK  |1  |Graphic cursor mask (SCREEN 2 to 4) or ordinate (SCREEN 5 to 12)
-|FAF5h  |DPPAGE |1  |Displayed page number. (MSX2~)  <br>Modified by SETPAGE X
-|FAF6h  |ACPAGE |1  |Destination page number. (MSX2~)  <br>Modified by SETPAGE ,X
+|FAF5h  |DPPAGE |1  |Displayed page number. (MSX2\~)  <br>Modified by SETPAGE X
+|FAF6h  |ACPAGE |1  |Destination page number. (MSX2\~)  <br>Modified by SETPAGE ,X
 |FAFCh  |MODE   |1  |Flag for screen mode
-                        bit 7: 1 = conversion to Katakana; 0 = conversion to Hiragana. (MSX2+~)
-                        bit 6: 1 if Kanji ROM level 2. (MSX2+~)
+                        bit 7: 1 = conversion to Katakana; 0 = conversion to Hiragana. (MSX2+\~)
+                        bit 6: 1 if Kanji ROM level 2. (MSX2+\~)
                         bit 5: 0 = SCREEN10, 1=SCREEN11. Selects when drawing functions will 
-                                draw using RGB (SCREEN10) or YJK (SCREEN11) (MSX2+~)
+                                draw using RGB (SCREEN10) or YJK (SCREEN11) (MSX2+\~)
                         bit 4: 1 to disable the limit of the Y coordinate to 191 on SCREEN 2 & 4 
-                                and to 211 on SCREEN 5/higher. (MSX2+~). 
+                                and to 211 on SCREEN 5/higher. (MSX2+\~). 
                                 Note: GRPPRT has a bug when printing text beyond line 211. 
                                 It will set bogus blitter coordinates.
-                        bit 3: 1 to limit VRAM access to 16KB on SCREEN 0~3
+                        bit 3: 1 to limit VRAM access to 16KB on SCREEN 0\~3
                         bits 1-2: VRAM size
                             00 for 16kB
                             01 for 64kB
                             10 for 128kB
                             11 for 192kB
-                        bit 0: 1 if the conversion of Romaji to Kana is possible. (MSX2~)
+                        bit 0: 1 if the conversion of Romaji to Kana is possible. (MSX2\~)
 |Address| Name  |Length|Description|
 |:-----:|:-----:|:-----:|----------|
 |FC18h  |LINWRK |40 |Work area for screen management
@@ -210,7 +210,7 @@ Screen Parameters
 |FCA6h  |GRPHED |1  |Heading for the output of graphic characters
 |FCAFh  |SCRMOD |1  |Screen mode
 |FCB0h  |OLDSCR |1  |Old screen mode
-|FAFDh  |NORUSE |1  |Used by KANJI-ROM for rendering KANJI fonts in graphic modes. (MSX2~)
+|FAFDh  |NORUSE |1  |Used by KANJI-ROM for rendering KANJI fonts in graphic modes. (MSX2\~)
                         bit 7 Don't return to textmode
                         bit 6 if 1 and F7F4h (DECCNT)=0, read SHIFT status ???
                         bit 5 Disable some functinality
@@ -224,7 +224,7 @@ Screen Parameters
                             4 for NOT
 |Address| Name  |Length|Description|
 |:-----:|:-----:|:-----:|----------|
-|FB02h  |LOGOPR |1  |Logical operation code. (MSX2~)
+|FB02h  |LOGOPR |1  |Logical operation code. (MSX2\~)
 |FCB3h  |GXPOS  |2  |X-position of graphic cursor
 |FCB5h  |GYPOS  |2  |Y-position of graphic cursor
 |FCB7h  |GRPACX |2  |X Graphics Accumulator
@@ -250,30 +250,30 @@ Area to save the last writting value in vdp registers
 ### MSX2 and newer
 |Address| Name  |Length|Description|
 |:-----:|:-----:|:-----:|----------|
-|FFE7h  |RG08SAV|1  |R#08 here, Used by VDP(9). (MSX2~)
-|FFE8h  |RG09SAV|1  |R#09 here, Used by VDP(10). (MSX2~)
-|FFE9h  |RG10SAV|1  |R#10 here, Used by VDP(11). (MSX2~)
-|FFEAh  |RG11SAV|1  |R#11 here, Used by VDP(12). (MSX2~)
-|FFEBh  |RG12SAV|1  |R#12 here, Used by VDP(13). (MSX2~)
-|FFECh  |RG13SAV|1  |R#13 here, Used by VDP(14). (MSX2~)
-|FFEDh  |RG14SAV|1  |R#14 here, Used by VDP(15). (MSX2~)
-|FFEEh  |RG15SAV|1  |R#15 here, Used by VDP(16). (MSX2~)
-|FFEFh  |RG16SAV|1  |R#16 here, Used by VDP(17). (MSX2~)
-|FFF0h  |RG17SAV|1  |R#17 here, Used by VDP(18). (MSX2~)
-|FFF1h  |RG18SAV|1  |R#18 here, Used by VDP(19). (MSX2~)
-|FFF2h  |RG19SAV|1  |R#19 here, Used by VDP(20). (MSX2~)
-|FFF3h  |RG20SAV|1  |R#20 here, Used by VDP(21). (MSX2~)
-|FFF4h  |RG21SAV|1  |R#21 here, Used by VDP(22). (MSX2~)
-|FFF5h  |RG22SAV|1  |R#22 here, Used by VDP(23). (MSX2~)
-|FFF6h  |RG23SAV|1  |R#23 here, Used by VDP(24). (MSX2~)
-|FFF7h  |MINROM |1  |Slot address of Main-ROM. Use EXPTBL+0 to know [slot ID](/wiki/Slot_ID "Slot ID") of the internal Main-ROM. (MSX2~)
+|FFE7h  |RG08SAV|1  |R#08 here, Used by VDP(9). (MSX2\~)
+|FFE8h  |RG09SAV|1  |R#09 here, Used by VDP(10). (MSX2\~)
+|FFE9h  |RG10SAV|1  |R#10 here, Used by VDP(11). (MSX2\~)
+|FFEAh  |RG11SAV|1  |R#11 here, Used by VDP(12). (MSX2\~)
+|FFEBh  |RG12SAV|1  |R#12 here, Used by VDP(13). (MSX2\~)
+|FFECh  |RG13SAV|1  |R#13 here, Used by VDP(14). (MSX2\~)
+|FFEDh  |RG14SAV|1  |R#14 here, Used by VDP(15). (MSX2\~)
+|FFEEh  |RG15SAV|1  |R#15 here, Used by VDP(16). (MSX2\~)
+|FFEFh  |RG16SAV|1  |R#16 here, Used by VDP(17). (MSX2\~)
+|FFF0h  |RG17SAV|1  |R#17 here, Used by VDP(18). (MSX2\~)
+|FFF1h  |RG18SAV|1  |R#18 here, Used by VDP(19). (MSX2\~)
+|FFF2h  |RG19SAV|1  |R#19 here, Used by VDP(20). (MSX2\~)
+|FFF3h  |RG20SAV|1  |R#20 here, Used by VDP(21). (MSX2\~)
+|FFF4h  |RG21SAV|1  |R#21 here, Used by VDP(22). (MSX2\~)
+|FFF5h  |RG22SAV|1  |R#22 here, Used by VDP(23). (MSX2\~)
+|FFF6h  |RG23SAV|1  |R#23 here, Used by VDP(24). (MSX2\~)
+|FFF7h  |MINROM |1  |Slot address of Main-ROM. Use EXPTBL+0 to know [slot ID](/wiki/Slot_ID "Slot ID") of the internal Main-ROM. (MSX2\~)
 
 ### MSX2+ and newer
 |Address| Name  |Length|Description|
 |:-----:|:-----:|:-----:|----------|
-|FFFAh  |RG25SAV|1  |R#25 here, Used by VDP(26). (MSX2+~)
-|FFFBh  |RG26SAV|1  |R#26 here, Used by VDP(27). (MSX2+~)
-|FFFCh  |RG27SAV|1  |R#27 here, Used by VDP(28). (MSX2+~)
+|FFFAh  |RG25SAV|1  |R#25 here, Used by VDP(26). (MSX2+\~)
+|FFFBh  |RG26SAV|1  |R#26 here, Used by VDP(27). (MSX2+\~)
+|FFFCh  |RG27SAV|1  |R#27 here, Used by VDP(28). (MSX2+\~)
 
 Interruptions
 =============
@@ -308,8 +308,8 @@ Function keys
 |:-----:|:-----:|:-----:|----------|
 |F3DEh  |CNSDFG |1  |Flag to know if the function keys are displayed (255) or not (0)
 |F87Fh  |FNKSTR |160|Texts for function keys
-|FAF9h  |CHRCNT |1  |Character counter in the buffer, used in KANA-ROM. (MSX2~)
-|FAFAh  |ROMA   |2  |Area to store KANA character (Japanese MSX2~ only)
+|FAF9h  |CHRCNT |1  |Character counter in the buffer, used in KANA-ROM. (MSX2\~)
+|FAFAh  |ROMA   |2  |Area to store KANA character (Japanese MSX2\~ only)
 |FBCDh  |FNKSWI |1  |Indicate which function keys is displayed
 |FBCEh  |FNKFLG |10 |Function key which have subroutine
 
@@ -394,13 +394,13 @@ Slots and Memory Map
 |:-----:|:-----:|:-----:|----------|
 |F672h  |MEMSIZ |2  |Highest location in memory used by Basic
 |F674h  |STKTOP |2  |Top location to be used for the stack
-|FAF8h  |EXBRSA |1  |SUB-ROM [Slot ID](/wiki/Slot_ID "Slot ID"). (MSX2~)
+|FAF8h  |EXBRSA |1  |SUB-ROM [Slot ID](/wiki/Slot_ID "Slot ID"). (MSX2\~)
 |FC48h  |BOTTOM |2  |Address of the beginning of the available RAM area
 |FC4Ah  |HIMEM  |2  |Address of the end of the available RAM area
 |FCC1h  |EXPTBL |4  |Bit 7 of these variables is a flag for each primary slot to indicate if the slot is expanded or not. The other bits are reset. The first variable (also called MNROM) indicates the slot ID of the Main-ROM. This implies that the Main-ROM of an MSX is always in primary slot 0, or secondary slot 0-0<pre>EXPTBL+0 = Flag for slot 0 (also Slot ID of the Main-ROM!)<br>EXPTBL+1 = Flag for slot 1<br>EXPTBL+2 = Flag for slot 2<br>EXPTBL+3 = Flag for slot 3<br>Note: MSX2 upgrade MA-20 for MSX1 moves the Main-ROM to another Slot. It changes the first variable to 0FCC1h (also called MNROM) to indicate the new Slot of the Main-ROM in F000SSPP format. This has the effect that it is no longer possible to determine whether the slot 0 is extended or not. The variable MINROM (0FFF7h) should be able to solve this problem but the extension also modifies MINROM</pre>
-|FCC5h  |SLTTBL |4  |Saves the state of the 4 secondary slot registers of each extended Primary Slot<pre>SLTTBL+0 = Value for slot 0<br>SLTTBL+1 = Value for slot 1<br>SLTTBL+2 = Value for slot 2<br>SLTTBL+3 = Value for slot 3<br> Format:<br>  Bits 1-0 = Extended slot on page 0000h~3FFFh<br>  Bits 3-2 = Extended slot on page 4000h~7FFFh<br>  Bits 5-4 = Extended slot on page 8000h~BFFFh<br>  Bits 7-6 = Extended slot on page C000h~FFFFh</pre>
-|FCC9h  |SLTATR |64 |Slot attributes given during MSX boot process<pre>Bit 7 = 1 if Basic program, else 0<br>Bit 6 = 1 if device extension, else 0<br>Bit 5 = 1 if statement extension, else 0<br>Bits 4~0 = Unused</pre>
-|FD09h  |SLTWRK |128|SLTWRK is a 128-byte variable array used to reserve a RAM work area in Main-RAM for ROM applications. This array consists of 8 bytes per slot (2 per memory page). Each of these 2 octets are provided to place an slot ID with flags on a byte (MSB) or an address on two bytes as follows<pre>SLTWRK+0 = Work area for slot 0-0, page 0000h~3FFFh<br>SLTWRK+2 = Work area for slot 0-0, page 4000h~7FFFh<br>SLTWRK+4 = Work area for slot 0-0, page 8000h~BFFFh<br>SLTWRK+6 = Work area for slot 0-0, page C000h~FFFFh<br>SLTWRK+8 = Work area for slot 0-1, page 0000h~3FFFh<br>.<br>.<br>SLTWRK+124 = Work area for slot 3-3, page 8000h~BFFFh<br>SLTWRK+126 = Work area for slot 3-3, page C000h~FFFFh</pre>The pointer is used to reserve a work area from 8000h or higher to F37Fh.  The slot ID is used to reserve a work area on the pages 0000h~3FFFh & 4000h~7FFFh).  Slot ID format used in table SLTWRK:  LSB = F RMD APP RES SS1 SS0 PS1 PS0  <br>MSB = 00h  
+|FCC5h  |SLTTBL |4  |Saves the state of the 4 secondary slot registers of each extended Primary Slot<pre>SLTTBL+0 = Value for slot 0<br>SLTTBL+1 = Value for slot 1<br>SLTTBL+2 = Value for slot 2<br>SLTTBL+3 = Value for slot 3<br> Format:<br>  Bits 1-0 = Extended slot on page 0000h\~3FFFh<br>  Bits 3-2 = Extended slot on page 4000h\~7FFFh<br>  Bits 5-4 = Extended slot on page 8000h\~BFFFh<br>  Bits 7-6 = Extended slot on page C000h\~FFFFh</pre>
+|FCC9h  |SLTATR |64 |Slot attributes given during MSX boot process<pre>Bit 7 = 1 if Basic program, else 0<br>Bit 6 = 1 if device extension, else 0<br>Bit 5 = 1 if statement extension, else 0<br>Bits 4\~0 = Unused</pre>
+|FD09h  |SLTWRK |128|SLTWRK is a 128-byte variable array used to reserve a RAM work area in Main-RAM for ROM applications. This array consists of 8 bytes per slot (2 per memory page). Each of these 2 octets are provided to place an slot ID with flags on a byte (MSB) or an address on two bytes as follows<pre>SLTWRK+0 = Work area for slot 0-0, page 0000h\~3FFFh<br>SLTWRK+2 = Work area for slot 0-0, page 4000h\~7FFFh<br>SLTWRK+4 = Work area for slot 0-0, page 8000h\~BFFFh<br>SLTWRK+6 = Work area for slot 0-0, page C000h\~FFFFh<br>SLTWRK+8 = Work area for slot 0-1, page 0000h\~3FFFh<br>.<br>.<br>SLTWRK+124 = Work area for slot 3-3, page 8000h\~BFFFh<br>SLTWRK+126 = Work area for slot 3-3, page C000h\~FFFFh</pre>The pointer is used to reserve a work area from 8000h or higher to F37Fh.  The slot ID is used to reserve a work area on the pages 0000h\~3FFFh & 4000h\~7FFFh).  Slot ID format used in table SLTWRK:  LSB = F RMD APP RES SS1 SS0 PS1 PS0  <br>MSB = 00h  
 
     *   PS = Primary slot number
     *   SS = Secondary slot number
@@ -415,10 +415,10 @@ SLTSL
 Access address to selection register of secondary slots. (Available in extended slots only.)
 
 Format:
- Bits 1-0 = Extended slot on page 0 (0000h~3FFFh)
- Bits 3-2 = Extended slot on page 1 (4000h~7FFFh)
- Bits 5-4 = Extended slot on page 2 (8000h~BFFFh)
- Bits 7-6 = Extended slot on page 3 (C000h~FFFFh)
+ Bits 1-0 = Extended slot on page 0 (0000h\~3FFFh)
+ Bits 3-2 = Extended slot on page 1 (4000h\~7FFFh)
+ Bits 5-4 = Extended slot on page 2 (8000h\~BFFFh)
+ Bits 7-6 = Extended slot on page 3 (C000h\~FFFFh)
 
 Note: Read value has the INVERTED bits of previous written value
 
@@ -426,8 +426,8 @@ Mouse/Trackball/Lightpen
 ========================
 |Address| Name  |Length|Description|
 |:-----:|:-----:|:-----:|----------|
-|FAFEh  |XSAVE  |2  |X-coordinate for Mouse/Trackball/Lightpen. (MSX2~)<pre>XSAVE = X-coordinate<br>XSAVE+1 = P0000000 (bit 7 indicates a request to interrupt the optical pen)</pre>
-|FB00h  |YSAVE  |2  |Y-coordinate for Mouse/Trackball/Lightpen. (MSX2~)<pre>YSAVE = X-coordinate<br>YSAVE+1 = \*0000000 (bit 7 unused)</pre>
+|FAFEh  |XSAVE  |2  |X-coordinate for Mouse/Trackball/Lightpen. (MSX2\~)<pre>XSAVE = X-coordinate<br>XSAVE+1 = P0000000 (bit 7 indicates a request to interrupt the optical pen)</pre>
+|FB00h  |YSAVE  |2  |Y-coordinate for Mouse/Trackball/Lightpen. (MSX2\~)<pre>YSAVE = X-coordinate<br>YSAVE+1 = \*0000000 (bit 7 unused)</pre>
 
 PLAY
 ====
