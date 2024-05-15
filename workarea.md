@@ -71,3 +71,528 @@
 | FBB0h   | ENSTOP | 1      | &lt;&gt;0 when it is possible to resume execution of a BASIC program (CTRL+SHIFT+GRPH+KANA/CODE to resume)
 | FCAEh   | FLBMEM | 1      | 0 if loading basic program
 | FD89h   | PROCNM | 16     | Work aera of the instructions CALL and OPEN. Contents the instruction name or device name
+
+Data and Variables of Basic
+---------------------------
+
+|Address| Name |Length|Description|
+|:-----:|:----:|:----:|-----------|
+|F6C2h  |VARTAB|2   |Address of the single variables area
+|F6C4h  |ARYTAB|2   |Address of the array variables area
+|F6C6h  |STREND|2   |Address of the end of the variable area
+|F6C8h  |DATPTR|2   |Pointer to next data to read from the instruction DATA. Modified by RESTORE
+|F6CAh  |DEFTBL|26  |Declaration table of variables defined by the instructions DEFINT, DEFSTR, DEFSNG and DEFDBL of the Basic for each alphabet letter.  2 = integer, 3 = String, 4 = Simple precision, 8 = Double precision (default)
+
+Displaying
+==========
+
+AV Control Port
+---------------
+
+|Address| Name |Length|Description|
+|:-----:|:----:|:----:|-----------|
+FAF7h
+AVCSAV
+1
+Copy of AV control port (#F7) content. (MSX2+~)
+
+CIRCLE
+------
+|Address| Name |Length|Description|
+|:-----:|:----:|:----:|-----------|
+|F3ECh  |MAXUPD |3  |Work area used by the instruction CIRCLE, contains JP 0000h at start
+|F3EFh  |MINUPD |3  |Work area used by the instruction CIRCLE, contains JP 0000h at start
+|F3F2h  |ATRBYT |1  |Tracing attribute (Plot color for graphic routines)
+|F40Bh  |ASPCT1 |2  |256/aspect ratio for Basic instruction CIRCLE
+|F40Dh  |ASPCT2 |2  |256\*aspect ratio for Basic instruction CIRCLE
+|F931h  |ASPECT |2  |Aspect ratio of the circle; set by <ratio> of CIRCLE
+|F933h  |CENCNT |2  |Counter used by CIRCLE
+|F935h  |CLINEF |1  |Flag to draw line to centre, Used set by CIRCLE
+|F936h  |CNPNTS |2  |Point to be plottted in a 45° segment, Used set by CIRCLE
+|F938h  |CPLOTF |1  |Plot polarity flag, Used set by CIRCLE
+|F939h  |CPCNT  |2  |Number of points in 1/8 of circle, Used set by CIRCLE
+|F93Bh  |CPCNT8 |2  |Number of points in the circle. Used by CIRCLE
+|F93Dh  |CRCSUM |2  |Cyclic redundancy check sum of the circle. Used by CIRCLE
+|F93Fh  |CSTCNT |2  |Variable to maintain the number of points of the starting angle. Used by the instruction CIRCLE
+|F941h  |CSCLXY |1  |Scale of X & Y. Used by the instruction CIRCLE
+
+DRAW
+----
+|Address| Name |Length|Description|
+|:-----:|:----:|:----:|-----------|
+|FCBBh  |DRWFLG |1  |Draw flag for the instruction DRAW<pre>Bit 7 = Draw Line 0 = No / 1 = Yes<br>Bit 6 = Move Cursor 0 = Yes / 1 = Yes<br>Bit 5 - 0 Unused</pre>
+|FCBCh  |DRWSCL |1  |Current draw scaling parameter for the instruction DRAW
+|FCBDh  |DRWANG |1  |Current draw angle parameter for the instruction DRAW<pre>0 = 0° rotation<br>1 = 90° rotation<br>2 = 180° otation<br>
+3 = 270° rotation</pre>See also MCLTAB and MCLFLG variables.
+
+PAINT
+-----
+Instruction PAINT and/or the routine from the BIOS
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F942h  |CSAVEA |2  |Address of the first pixel of different color, Used by PAINT
+|F944h  |CSAVEM |1  |Mask of the first pixel of different color, Used by PAINT
+|F945h  |CXOFF  |2  |X offset from center, Used by PAINT
+|F947h  |CYOFF  |2  |Y offset from center, Used by PAINT
+|F949h  |LOHMSK |1  |Leftmost position of an LH excursion, Used by PAINT
+|F94Ah  |LOHDIR |1  |New painting direction required by an LH excursion, Used by PAINT
+|F94Bh  |LOHADR |2  |Leftmost position of an LH, Used by PAINT
+|F94Dh  |LOHCNT |2  |Size of an LH excursion, Used by PAINT
+|F94Fh  |SKPCNT |2  |Skip count, Used by PAINT
+|F951h  |MOVCNT |2  |Movement count, Used by PAINT
+|F953h  |PDIREC |1  |Direction of the paint, Used by PAINT
+|F954h  |LFPROG |1  |Set to 1 when moving to the left. Used by PAINT
+|F955h  |RTPROG |1  |Set to 1 when moving to the right. Used by PAINT
+|FCB2h  |BRDATR |1  |Border color returned by PAINT
+
+Screen Parameters
+-----------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3E9h  |FORCLR |1  |Foreground colour
+|F3EAh  |BAKCLR |1  |Background colour
+|F3EBh  |BDRCLR |1  |Border colour
+|F3AEh  |LINL40 |1  |Screen width per line in SCREEN 0 (Default 39)
+|F3AFh  |LINL32 |1  |Screen width per line in SCREEN 1 (Default 29)
+|F3B0h  |LINLEN |1  |Current screen width per line
+|F3B1h  |CRTCNT |1  |Number of lines of current screen (default 24)
+|F3B2h  |CLMLST |1  |X-location in the case that items are divided by commas in PRINT. (LINLEN-(LINLEN MOD 14)-14)
+|F3B3h  |TXTNAM |2  |SCREEN 0 pattern name tabte address
+|F3B5h  |TXTCOL |2  |SCREEN 0 color table address
+|F3B7h  |TXTCGP |2  |SCREEN 0 Pattern generator table address
+|F3B9h  |TXTATR |2  |Unused
+|F3BBh  |TXTPAT |2  |Unused
+|F3BDh  |T32NAM |2  |SCREEN 1 pattern name table address
+|F3BFh  |T32COL |2  |SCREEN 1 color table address
+|F3C1h  |T32CGP |2  |SCREEN 1 pattern ganarator table address
+|F3C3h  |T32ATR |2  |SCREEN 1 sprite attribute table address
+|F3C5h  |T32PAT |2  |SCREEN 1 sprite generator table address
+|F3C7h  |GRPNAM |2  |SCREEN 2 pattern name table address
+|F3C9h  |GRPCOL |2  |SCREEN 2 color table address
+|F3CBh  |GRPCGP |2  |SCREEN 2 pattern generator table address
+|F3CDh  |GRPATR |2  |SCREEN 2 sprite attribute table address
+|F3CFh  |GRPPAT |2  |SCREEN 2 sprite generator table address
+|F3D1h  |MLTNAM |2  |SCREEN 3 pattern name tabte address
+|F3D3h  |MLTCOL |2  |SCREEN 3 color table address
+|F3D5h  |MLTCGP |2  |SCREEN 3 pattern generator table address
+|F3D7h  |MLTATR |2  |SCREEN 3 sprite attribute table address
+|F3D9h  |MLTPAT |2  |SCREEN 3 sprite generator table address
+|F7C4h  |TRCFLG |1  |Tracing flag. 0 = No tracing; Other = Tracing in progress
+|F91Fh  |CGPNT  |2  |Location of the character font used to initialise screen<pre>CGPNT = Slot ID<br>CGPNT+1 = Address</pre>
+|F922h  |NAMBAS |2  |Current pattern name table address
+|F924h  |CGPBAS |2  |Current pattern generator table address
+|F926h  |PATBAS |2  |Current sprite generator table address
+|F928h  |ATRBAS |2  |Current sprite attribute table address
+|F92Ah  |CLOC   |2  |Graphic cursor location
+|F92Ch  |CMASK  |1  |Graphic cursor mask (SCREEN 2 to 4) or ordinate (SCREEN 5 to 12)
+|FAF5h  |DPPAGE |1  |Displayed page number. (MSX2~)  <br>Modified by SETPAGE X
+|FAF6h  |ACPAGE |1  |Destination page number. (MSX2~)  <br>Modified by SETPAGE ,X
+|FAFCh  |MODE   |1  |Flag for screen mode
+                        bit 7: 1 = conversion to Katakana; 0 = conversion to Hiragana. (MSX2+~)
+                        bit 6: 1 if Kanji ROM level 2. (MSX2+~)
+                        bit 5: 0 = SCREEN10, 1=SCREEN11. Selects when drawing functions will 
+                                draw using RGB (SCREEN10) or YJK (SCREEN11) (MSX2+~)
+                        bit 4: 1 to disable the limit of the Y coordinate to 191 on SCREEN 2 & 4 
+                                and to 211 on SCREEN 5/higher. (MSX2+~). 
+                                Note: GRPPRT has a bug when printing text beyond line 211. 
+                                It will set bogus blitter coordinates.
+                        bit 3: 1 to limit VRAM access to 16KB on SCREEN 0~3
+                        bits 1-2: VRAM size
+                            00 for 16kB
+                            01 for 64kB
+                            10 for 128kB
+                            11 for 192kB
+                        bit 0: 1 if the conversion of Romaji to Kana is possible. (MSX2~)
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FC18h  |LINWRK |40 |Work area for screen management
+|FC40h  |PATWRK |8  |Returned character pattern by the routine GETPAT
+|FCA6h  |GRPHED |1  |Heading for the output of graphic characters
+|FCAFh  |SCRMOD |1  |Screen mode
+|FCB0h  |OLDSCR |1  |Old screen mode
+|FAFDh  |NORUSE |1  |Used by KANJI-ROM for rendering KANJI fonts in graphic modes. (MSX2~)
+                        bit 7 Don't return to textmode
+                        bit 6 if 1 and F7F4h (DECCNT)=0, read SHIFT status ???
+                        bit 5 Disable some functinality
+                        bit 4 Not in use	
+                        bit 3 color 0 = Transparent
+                        bit 0-2: Logical operation on kanji font draw
+                            0 for PSET
+                            1 for AND
+                            2 for OR
+                            3 for XOR
+                            4 for NOT
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FB02h  |LOGOPR |1  |Logical operation code. (MSX2~)
+|FCB3h  |GXPOS  |2  |X-position of graphic cursor
+|FCB5h  |GYPOS  |2  |Y-position of graphic cursor
+|FCB7h  |GRPACX |2  |X Graphics Accumulator
+|FCB9h  |GRPACY |2  |Y Graphics Accumulator
+
+VDP Registers
+-------------
+Area to save the last writting value in vdp registers
+### MSX1 and newer
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3DFh  |RG0SAV |1  |R#00, Used by VDP(0)
+|F3E0h  |RG1SAV |1  |R#01, Used by VDP(1)
+|F3E1h  |RG2SAV |1  |R#02, Used by VDP(2)
+|F3E2h  |RG3SAV |1  |R#03, Used by VDP(3)
+|F3E3h  |RG4SAV |1  |R#04, Used by VDP(4)
+|F3E4h  |RG5SAV |1  |R#05, Used by VDP(5)
+|F3E5h  |RG6SAV |1  |R#06, Used by VDP(6)
+|F3E6h  |RG7SAV |1  |R#07.at start, Used by VDP(7)
+|F3E7h  |STATFL |   |status register R#00, Used by VDP(0)
+
+### MSX2 and newer
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FFE7h  |RG08SAV|1  |R#08 here, Used by VDP(9). (MSX2~)
+|FFE8h  |RG09SAV|1  |R#09 here, Used by VDP(10). (MSX2~)
+|FFE9h  |RG10SAV|1  |R#10 here, Used by VDP(11). (MSX2~)
+|FFEAh  |RG11SAV|1  |R#11 here, Used by VDP(12). (MSX2~)
+|FFEBh  |RG12SAV|1  |R#12 here, Used by VDP(13). (MSX2~)
+|FFECh  |RG13SAV|1  |R#13 here, Used by VDP(14). (MSX2~)
+|FFEDh  |RG14SAV|1  |R#14 here, Used by VDP(15). (MSX2~)
+|FFEEh  |RG15SAV|1  |R#15 here, Used by VDP(16). (MSX2~)
+|FFEFh  |RG16SAV|1  |R#16 here, Used by VDP(17). (MSX2~)
+|FFF0h  |RG17SAV|1  |R#17 here, Used by VDP(18). (MSX2~)
+|FFF1h  |RG18SAV|1  |R#18 here, Used by VDP(19). (MSX2~)
+|FFF2h  |RG19SAV|1  |R#19 here, Used by VDP(20). (MSX2~)
+|FFF3h  |RG20SAV|1  |R#20 here, Used by VDP(21). (MSX2~)
+|FFF4h  |RG21SAV|1  |R#21 here, Used by VDP(22). (MSX2~)
+|FFF5h  |RG22SAV|1  |R#22 here, Used by VDP(23). (MSX2~)
+|FFF6h  |RG23SAV|1  |R#23 here, Used by VDP(24). (MSX2~)
+|FFF7h  |MINROM |1  |Slot address of Main-ROM. Use EXPTBL+0 to know [slot ID](/wiki/Slot_ID "Slot ID") of the internal Main-ROM. (MSX2~)
+
+### MSX2+ and newer
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FFFAh  |RG25SAV|1  |R#25 here, Used by VDP(26). (MSX2+~)
+|FFFBh  |RG26SAV|1  |R#26 here, Used by VDP(27). (MSX2+~)
+|FFFCh  |RG27SAV|1  |R#27 here, Used by VDP(28). (MSX2+~)
+
+Interruptions
+=============
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FC4Ch  |TRPTBL |78 |Tables for each of the following instructions:<pre>TRPTBL (3×10 bytes) => ON KEY GOSUB<br>TRPTBL+30 (3×1 byte) => ON STOP GOSUB<br>TRPTBL+33 (3×1 byte) => ON SPRITE GOSUB<br>TRPTBL+48 (3×5 bytes) => ON GOSUB STRIG<br>TRPTBL+51 (3×1 byte) => ON INTERVAL GOSUB<br>TRPTBL+54 => Reserved</pre>The first octet serves as an flag. 0 = OFF, 1 = ON, 2 = STOP, 3 = Call in progress, 7 = Call waiting. The other 2 bytes contain the address of the line number of the routine to be called by the GOSUB in the Basic program
+|FC9Ah  |RTYCNT |1  |Interrupt control
+|FC9Bh  |INTFLG |1  |This flag is set if STOP or CTRL+STOP is pressed<pre>0 = Not Pressed<br>3 = CTRL +STOP Pressed<br>4 = STOP Pressed</pre>
+|FC9Ch  |PADY   |1  |Y-coordinate of a connected touch pad. (Until MSX2+)
+|FC9Dh  |PADX   |1  |X-coordinate of a connected touch pad. (Until MSX2+)
+|FC9Eh  |JIFFY  |2  |Contains value of the software clock, each interrupt of the VDP it is increased by 1<br>The contents can be read or changed by the function 'TIME' or instruction 'TIME'
+|FCA0h  |INTVAL |2  |Contains length of the interval when the ON INTERVAL routine was established
+|FCA2h  |INTCNT |2  |ON INTERVAL counter (counts backwards)
+|FCA7h  |ESCCNT |1  |Escape sequence counter
+
+Keyboard and Triggers
+=====================
+
+Cursor Parameters
+-----------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3DCh  |CSRY   |1  |Y-coordinate of text cursor
+|F3DDh  |CSRX   |1  |X-coordinate of text cursor
+|FBCCh  |CODSAV |1  |ASCII code of character under the cursor
+|FCA8h  |INSFLG |1  |Insert mode flag
+|FCA9h  |CSRSW  |1  |Cursor display switch<br>Cursor style i.e. Used if INS Key is used. ( 0 = Full Cursor / other = Halve Cursor )
+
+Function keys
+-------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3DEh  |CNSDFG |1  |Flag to know if the function keys are displayed (255) or not (0)
+|F87Fh  |FNKSTR |160|Texts for function keys
+|FAF9h  |CHRCNT |1  |Character counter in the buffer, used in KANA-ROM. (MSX2~)
+|FAFAh  |ROMA   |2  |Area to store KANA character (Japanese MSX2~ only)
+|FBCDh  |FNKSWI |1  |Indicate which function keys is displayed
+|FBCEh  |FNKFLG |10 |Function key which have subroutine
+
+Keys and Triggers
+-----------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3DBh  |CLIKSW |1  |Key click switch. (0 = Disabled / 1 = Enabled)
+|F3E8h  |TRGFLG |1  |Stores trigger button status of joystick
+    Byte Format:
+    7 6 5 4 3 2 1 0
+    | | | |       +- Space bar on the keyboard (0 when pressed)
+    | | | +-------- Trigger 1 on the joystick 1 (0 when pressed)
+    | | +--------- Trigger 2 on the joystick 1 (0 when pressed)
+    | +---------- Trigger 1 on the joystick 2 (0 when pressed)
+    +----------- Trigger 2 on the joystick 2 (0 when pressed)
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3F6h  |SCNCNT |1  |Interval for the key scan. Permanently set by the Basic
+|F3F7h  |REPCNT |1  |Delay until the auto-repeat of the key begins. (50 by default)
+|F3F8h  |PUTPNT |2  |Address of first free byte in the Keyboard Buffer. (FBF0h by default)
+|F3FAh  |GETPNT |2  |Address of the next data from the keyboard (in the Keyboard Buffer)
+|FBB1h  |BASROM |1  |<>0 if basic is in rom. (CTRL+STOP disabled)
+|FBB2h  |LINTTB |24 |Table of 24 end-of-line flags for each physical line. (used by the Basic interpreter.)<pre>0 = The corresponding line contains a program line that continues on the next physical line,<br>Other value = The corresponding line contains a program line that ends here</pre>
+|FBCAh  |FSTPOS |2  |First position for inlin
+|FBD8h  |ONGSBF |1  |Global event flag
+|FBD9h  |CLIKFL |1  |Flag to know if the key click has already occurred
+|FBDAh  |OLDKEY |11 |Previous status of each keyboard matrix row
+|FBE5h  |NEWKEY |11 |New status of each keyboard matrix row. The status is updated by the KEYINT interrupt routine
+    Bit correspondence for a European Keyboard Layout:
+    NEWKEY+0  = 7      6      5      4      3      2      1      0
+    NEWKEY+1  = ;      ]      [      \      =      -      9      8
+    NEWKEY+2  = B      A    ACCENT   /      .      ,      \`      '
+    NEWKEY+3  = J      I      H      G      F      E      D      C
+    NEWKEY+4  = R      Q      P      O      N      M      L      K
+    NEWKEY+5  = Z      Y      X      W      V      U      T      S
+    NEWKEY+6  = F3     F2     F1    CODE   CAPS   GRPH   CTRL  SHIFT
+    NEWKEY+7  = RET    SEL    BS    STOP   TAB    ESC    F5     F4
+    NEWKEY+8  = RIGHT  DOWN   UP    LEFT   DEL    INS    HOME  SPACE
+    NEWKEY+9  = 4      3      2      1      0      /      +      \*
+    NEWKEY+10 = .      ,      -      9      8      7      6      5
+
+See [here](/wiki/Keyboard "Keyboard") for other keyboard layouts
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FBF0h  |KEYBUF |40 |Key code buffer
+|FCABh  |CAPST  |1  |Capital status. ( 0 = Off / other = On )
+|FCACh  |KANAST |1  |Kana mode flags for MSX Japanese, Russian key status ou "Dead Key" status<pre>0 = No Dead Keys<br>1 = Dead Key > Accent Grave<br>2 = SHIFT + Dead Key > Accent Egu<br>3 = CODE + Dead Key > Accent Circumflex<br>4 = SHIFT + CODE + Dead Key > Trema</pre>
+|FCADh  |KANAMD |1  |Flag to know if the keyboard type is "KANA" (0) or "JIS" (other value). (Japanese MSX only)
+
+Math-Pack
+=========
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F663h  |VALTYP |1  |Contains the code of the type of variable that is currently in DAC<pre>2 = Integer<br>3 = String<br>4 = Single precision<br>8 = Double precision</pre>
+|F7C5h  |FBUFFR |43 |Buffer used by mathematical routines
+|F7F0h  |DECTMP |2  |Used to transform decimal integer to floating point number
+|F7F2h  |DECTM2 |2  |Used by the divisions
+|F7F4h  |DECCNT |2  |Used by the divisions
+|F7F6h  |DAC    |16 |Decimal accumulator
+|F806h  |HOLD8  |48 |Work area for decimal multiplications
+|F836h  |HOLD2  |8  |Work area in the execution of numerical operators
+|F83Eh  |HOLD   |8  |Work area in the execution of numerical operators
+|F847h  |ARG    |16 |Argument. (Value used to be calculate with DAC.)
+|F857h  |RNDX   |8  |Last random number generated
+
+Memory
+======
+Subroutines For Inter-Slot Read/Write/Call
+------------------------------------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F380h  |RDPRIM |5  |RDSLT (Main-ROM) subroutine which is used to read a byte from memory at the address indicated by HL in the primary Slot specified by register A, then replaces the slots to the state at the time of the call. The byte read is returned to the E register.<br>The D register must contain the current state of the primary Slots to call this routine as well as the A register, except the 2 bits of the Slot to be selected on the range in which the memory byte must be read.
+|F385h  |WRPRIM |7  |WRSLT (Main-ROM) subroutine which is used to write a byte in memory at the address indicated by HL in the primary Slot specified by register A, then replaces the slots to the state at the time of the call.<br>The byte to be written must be specified in the E register and the A and D registers must contain the current state of the primary Slots to call this routine, except the 2 bits of the Slot to be selected on the range in which the byte must be written for register A.
+|F38Ch  |CLPRIM |14 |CALSLT (Main-ROM) subroutine which is used to call a routine in the primary Slot specified by register A at the address indicated by HL, then replaces the Slot in the state at the time of the call to CLPRIM.<br>As input, register A must contain the current state of the primary Slots except the 2 bits of the Slot to be selected on the range in which the routine to be called is located. The A' register must contain the value of the A register that the routine to be called would need. The byte on top of the stack should contain the was of the current Primary Slots.
+
+Slots and Memory Map
+--------------------
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F672h  |MEMSIZ |2  |Highest location in memory used by Basic
+|F674h  |STKTOP |2  |Top location to be used for the stack
+|FAF8h  |EXBRSA |1  |SUB-ROM [Slot ID](/wiki/Slot_ID "Slot ID"). (MSX2~)
+|FC48h  |BOTTOM |2  |Address of the beginning of the available RAM area
+|FC4Ah  |HIMEM  |2  |Address of the end of the available RAM area
+|FCC1h  |EXPTBL |4  |Bit 7 of these variables is a flag for each primary slot to indicate if the slot is expanded or not. The other bits are reset. The first variable (also called MNROM) indicates the slot ID of the Main-ROM. This implies that the Main-ROM of an MSX is always in primary slot 0, or secondary slot 0-0<pre>EXPTBL+0 = Flag for slot 0 (also Slot ID of the Main-ROM!)<br>EXPTBL+1 = Flag for slot 1<br>EXPTBL+2 = Flag for slot 2<br>EXPTBL+3 = Flag for slot 3<br>Note: MSX2 upgrade MA-20 for MSX1 moves the Main-ROM to another Slot. It changes the first variable to 0FCC1h (also called MNROM) to indicate the new Slot of the Main-ROM in F000SSPP format. This has the effect that it is no longer possible to determine whether the slot 0 is extended or not. The variable MINROM (0FFF7h) should be able to solve this problem but the extension also modifies MINROM</pre>
+|FCC5h  |SLTTBL |4  |Saves the state of the 4 secondary slot registers of each extended Primary Slot<pre>SLTTBL+0 = Value for slot 0<br>SLTTBL+1 = Value for slot 1<br>SLTTBL+2 = Value for slot 2<br>SLTTBL+3 = Value for slot 3<br> Format:<br>  Bits 1-0 = Extended slot on page 0000h~3FFFh<br>  Bits 3-2 = Extended slot on page 4000h~7FFFh<br>  Bits 5-4 = Extended slot on page 8000h~BFFFh<br>  Bits 7-6 = Extended slot on page C000h~FFFFh</pre>
+|FCC9h  |SLTATR |64 |Slot attributes given during MSX boot process<pre>Bit 7 = 1 if Basic program, else 0<br>Bit 6 = 1 if device extension, else 0<br>Bit 5 = 1 if statement extension, else 0<br>Bits 4~0 = Unused</pre>
+|FD09h  |SLTWRK |128|SLTWRK is a 128-byte variable array used to reserve a RAM work area in Main-RAM for ROM applications. This array consists of 8 bytes per slot (2 per memory page). Each of these 2 octets are provided to place an slot ID with flags on a byte (MSB) or an address on two bytes as follows<pre>SLTWRK+0 = Work area for slot 0-0, page 0000h~3FFFh<br>SLTWRK+2 = Work area for slot 0-0, page 4000h~7FFFh<br>SLTWRK+4 = Work area for slot 0-0, page 8000h~BFFFh<br>SLTWRK+6 = Work area for slot 0-0, page C000h~FFFFh<br>SLTWRK+8 = Work area for slot 0-1, page 0000h~3FFFh<br>.<br>.<br>SLTWRK+124 = Work area for slot 3-3, page 8000h~BFFFh<br>SLTWRK+126 = Work area for slot 3-3, page C000h~FFFFh</pre>The pointer is used to reserve a work area from 8000h or higher to F37Fh.  The slot ID is used to reserve a work area on the pages 0000h~3FFFh & 4000h~7FFFh).  Slot ID format used in table SLTWRK:  LSB = F RMD APP RES SS1 SS0 PS1 PS0  <br>MSB = 00h  
+
+    *   PS = Primary slot number
+    *   SS = Secondary slot number
+    *   RES = Reserved
+    *   APP = Set if the RAM used by an application, 0 otherwise
+    *   RMD = Set if the RAM is used by instruction CALL MEMINI, 0 otherwise
+    *   F = Set if secondary slot, 0 if primary slot
+
+FFFFh
+SLTSL
+1
+Access address to selection register of secondary slots. (Available in extended slots only.)
+
+Format:
+ Bits 1-0 = Extended slot on page 0 (0000h~3FFFh)
+ Bits 3-2 = Extended slot on page 1 (4000h~7FFFh)
+ Bits 5-4 = Extended slot on page 2 (8000h~BFFFh)
+ Bits 7-6 = Extended slot on page 3 (C000h~FFFFh)
+
+Note: Read value has the INVERTED bits of previous written value
+
+Mouse/Trackball/Lightpen
+========================
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FAFEh  |XSAVE  |2  |X-coordinate for Mouse/Trackball/Lightpen. (MSX2~)<pre>XSAVE = X-coordinate<br>XSAVE+1 = P0000000 (bit 7 indicates a request to interrupt the optical pen)</pre>
+|FB00h  |YSAVE  |2  |Y-coordinate for Mouse/Trackball/Lightpen. (MSX2~)<pre>YSAVE = X-coordinate<br>YSAVE+1 = \*0000000 (bit 7 unused)</pre>
+
+PLAY
+====
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3F5h  |FRCNEW |1  |Work area size for PLAY (255 by default)
+|FB35h  |PRSCNT |1  |Parse counter<pre>Bits 0-1 = String parse<br>Bit 7 = Pass if set</pre>
+|FB36h  |SAVSP  |2  |Stack pointer when instruction PLAY is used
+|FB38h  |VOICEN |1  |Number of voice played
+|FB39h  |SAVVOL |2  |The volume is saved here when Pause
+|FB3Bh  |MCLLEN |1  |Length of the macro being analyzed
+|FB3Ch  |MCLPTR |2  |Address of the macro being analyzed
+|FB3Fh  |MUSICF |1  |Music interruption flags
+|FB40h  |PLYCNT |1  |Number of macro strings in the PLAY queue
+|FB41h  |VCBA   |37 |Data for voice A<pre>VCBA	= Duration counter<br>VCBA+2	= String length<br>VCBA+3	= String address<br>VCBA+5	= Stack data address<br>VCBA+7	= Music packet length<br>VCBA+8	= Music packet<br>VCBA+9	= Octave<br>VCBA+10	= Length<br>VCBA+11	= Tempo<br>VCBA+12	= Volume<br>VCBA+13	= Envelope period<br>VCBA+15	= Space for stack data</pre>
+|FB66h  |VCBB   |37 |Data for voice B
+|FB8Bh  |VCBC   |37 |Data for voice C<br>See also the [Queues](/wiki/System_variables_and_work_area#Queues "System variables and work area") paragraph.
+
+Printer
+=======
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F415h  |LPTPOS |1  |Position of printer head
+|F416h  |PRTFLG |1  |Flag whether to send to printer. (0 = Print to screen / other = Print to printer)
+|F417h  |NTMSXP |1  |0 If MSX printer (This converts Hiragana to Katakana on Japanese MSX)
+|F418h  |RAWPRT |1  |0 to convert TAB's and unknown characters to spaces.  Other value to print in 'RAW MODE'
+
+MML Queues
+==========
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3F3h  |QUEUES |2  |QUETAB table address (F959h by default), used by PLAY
+|F959h  |QUETAB |24 |Queue tables (VOICAQ, VOICBQ, VOICCQ and RS2IQ (RS-232C))
+    QUETAB:
+    ;Voice A queue
+        db 0		;Starting position
+        db 0		;Position flag
+        db 0		;Replacement flag
+        db 7Fh		;size
+        dw VOICAQ	;Address
+    ;Voice C queue
+        db 0		;Starting position
+        db 0		;Position flag
+        db 0		;Replacement flag
+        db 7Fh		;size
+        dw VOICBQ	;Address
+    ;Voice C queue
+        db 0		;Starting position
+        db 0		;Position flag
+        db 0		;Replacement flag
+        db 7Fh		;size
+        dw VOICCQ	;Address
+    ;RS-232C queue (MSX1 only)
+        db 0		;Starting position
+        db 0		;Position flag
+        db 0		;Replacement flag
+        db 0		;size
+        dw RS2IQ	;address (0000h by default)
+
+The three music control tables are initialized by the GICINI routine (00090h) and then managed by the interrupt routine and the PUTQ routine (000F9h)
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F971h  |QUEBAK |4  |Replacement characters table of queues<pre>QUEBAK:<br>	db 0	; Replacement characters (voice A)<br>	db 0	; Replacement characters (voice B)<br>	db 0	; Replacement characters (voice C)<br>	db 0	; Replacement characters (RS-232C) (MSX1 only)</pre>
+|F975h  |VOICAQ |128|Voice A queue of instruction PLAY. (PSG)  If MSX-Music is present area #F9C0-#F9F8 is used to store copy of YM2413 registers
+|F9F5h  |VOICBQ |128|Voice B queue of instruction PLAY. (PSG)
+|FA75h  |VOICCQ |128|Voice C queue of instruction PLAY. (PSG)
+|FAF5h  |RS2IQ  |64 |RS-232C queue. (MSX1 only)
+|FB3Eh  |QUEUEN |1  |Number of the current queue
+
+RS-232C
+=======
+Data Area Used By RS-232C
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FB03h  |RSTMP  |1  |Temporary data storage for RS232 Driver
+|FB03h  |TOCNT  |1  |Counter used by the RS-232C interface
+|FB04h  |RSFCB  |2  |FCB ("File Control Block") address of the RS-232C
+|FB06h  |RSIQLN |1  |Byte DATA used by the RS-232C interface
+|FB07h  |MEXBIh |5  |Hook called by the RS-232C<pre>MEXBIh = RST 30h (0F7h)<br>MEXBIh+1 = Slot ID<br>MEXBIh+2 = Address<br>MEXBIh+4 = RET (0C9h)</pre>
+|FB0Ch  |OLDSTT |5  |Hook called by the RS-232C<pre>OLDSTT = RST 30h (0F7h)<br>OLDSTT+1 = Slot ID<br>OLDSTT+2 = Address<br>OLDSTT+4 = RET (0C9h)</pre>
+|FB0Ch  |OLDINT |5  |Hook called by the RS-232C<pre>OLDINT = RST 30h (0F7h)<br>OLDINT+1 = Slot ID<br>OLDINT+2 = Address<br>OLDINT+4 = RET (0C9h)</pre>
+|FB16h  |DEVNUM |1  |Byte offset. (RS-232C)
+|FB17h  |DATCNT |3  |DATA area. (RS-232C)<pre>DATCNT = Slot ID<br>DATCNT+1 = Address</pre>
+|FB1Ah  |ERRORS |1  |RS-232C error code
+|FB1Bh  |FLAGS  |1  |RS-232C flags
+|FB1Ch  |ESTBLS |1  |Bit boolean. (RS-232C)
+|FB1Dh  |COMMSK |1  |RS-232C mask
+|FB1Eh  |LSTCOM |1  |Byte Data. (RS-232C)
+|FB1Fh  |LSTMOD |1  |Byte Data. (RS-232C)
+
+Storage
+=======
+
+Cassette Tape
+-------------
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F3FCh  |CS120  |5  |Work area of the data recorder. (Until MSX2+)<pre>CS120+0 = LOW signal length of bit 0. (53h by default)<br>CS120+1 = HIGH signal length of bit 0. (5Ch by default)<br>CS120+2 = Length of LOW signal of bit 1. (26h by default)<br>CS120+3 = Length of HIGH signal of bit 1. (2Dh by default)<br>CS120+4 = Length of the header signal calculated by HEADLEN \* 2/256(HEADLEN = 2000)</pre>
+|F401h  |CS240  |5  |Work area of the data recorder. (Until MSX2+)<pre>CS240+0 = LOW signal length of bit 0. (25h by default)<br>CS240+1 = HIGH signal length of bit 0. (2Dh by default)<br>CS240+2 = Length of LOW signal of bit 1. (0Eh by default)<br>CS240+3 = Length of HIGH signal of bit 1. (16h by default)<br>CS240+4 = Length of the header signal calculated by HEADLEN \* 2/256(HEADLEN = 2000)</pre>
+|F406h  |LOW    |2  |Settings for the tape player. (Until MSX2+)<pre>LOW+0 = LOW signal length which represents bit 0 at the current transmission rate. (53h by default)<br>LOW+1 = HIGH signal length that represents bit 0 at the current transmission rate.(5Ch by default)
+</pre>
+|F408h  |HIGH   |2  |Settings for the tape player. (Until MSX2+)<pre>HIGH+0 = Length of the LOW signal that represents bit 1 at the current transmission rate. (26h by default)<br>HIGH+1 = Length of the HIGH signal that represents bit 1 at the current transmission rate. (2Dh by default)</pre>
+|F40Ah  |HEADER |1  |Settings for the tape player. (Until MSX2+) Length of the current header signal calculated by HEADLEN \* 2/256 or HEADLEN \* 4/256 (HEADLEN = 2000)
+|FCA4h  |LOWLIM |1  |Used by the Cassette system (minimal length of startbit)
+|FCA5h  |WINWID |1  |Used by the Cassette system (store the difference between a low-and high-cycle)
+|FCB1h  |CASPRV |1  |Work area for the cassette (until MSX2+) On MSX turbo R, the system saves the contents of port A7h each time it is written.<pre>*   bit 0 is set when the Pause LED is on;<br>*   bit 1 is set when Z80 is active CPU.<br>*   bit 7 is set when the R800 mode LED is on.</pre>
+
+Disks
+-----
+This area is not used on system without disk, Data Area used By Disk-Basic / MSX-DOS:
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F348h  |MASTERS|1  |Slot number of the master disk controller
+|FB20h  |HOKVLD |1  |Bit 0 of this byte indicates the presence of an extended Bios.<br>0 = No Bios, 1 = There is at least one Bios that can be called at the address 0FFCAh (EXTBIO)
+|FB21h  |DRVTBL |8  |[Slot ID](/wiki/Slot_ID "Slot ID") and number of drives connected to disk interfaces, a value of zero for the number of drives marks the end of the table<pre>DRVTBL+0 = Number of drives connected to disk interface 1<br>DRVTBL+1 = Slot ID of disk interface 1<br>DRVTBL+2 = Number of drives connected to disk interface 2<br>DRVTBL+3 = Slot ID of disk interface 2<br>DRVTBL+4 = Number of drives connected to disk interface 3<br>DRVTBL+5 = Slot ID of disk interface 3<br>DRVTBL+6 = Number of drives connected to disk interface 4<br>DRVTBL+7 = Slot ID of disk interface 4</pre>
+|FB29h  |HOKSAV |12 |[Slot ID](/wiki/Slot_ID "Slot ID") and address of the timer interrupt handler for each disk interface, each entry corresponds to the equivalent entry in DRVTBL<pre>HOKSAV+0 = Slot ID of previous/current interrupt handler of interface 1<br>HOKSAV+1 = Address of previous/current interrupt handler of interface 1<br>HOKSAV+3 = Slot ID of previous/current interrupt handler of interface 2<br>HOKSAV+4 = Address of previous/current interrupt handler of interface 2<br>HOKSAV+6 = Slot ID of previous/current interrupt handler of interface 3<br>HOKSAV+7 = Address of previous/current interrupt handler of interface 3<br>HOKSAV+9 = Slot ID of previous/current interrupt handler of interface 4<br>HOKSAV+10 = Address of previous/current interrupt handler of interface 4</pre>
+|FD99h  |DEVICE |1  |This byte increases to 255 when SHIFT key was pressed at startup to prevent the installation of disks. Otherwise, this byte remains reseted. (Disk-Basic)
+
+**Note about how HOKSAV is filled an used**
+
+The values of the HOKSAV table have different meanings in MSX-DOS 1 and MSX-DOS 2.
+
+**In MSX-DOS 1** disk drivers that have a timer interrupt service routine invoke a routine named SETINT provided by the MSX-DOS kernel they are attached to, this routine fills the HOKSAV entry corresponding to the driver with the slot number and address that are held in H.TIMI (which is assumed to contain a RST 30h instruction), then sets H.TIMI with the address of the interrupt routine of the driver itself (this address is passed to SETINT).
+
+Thus each entry in HOKSAV holds the slot number and address of the **previous** timer interrupt handler for each driver (the value that was in H.TIMI when the driver invoked SETINT). At the end of the boot procedure H.TIMI is pointing to the interrupt routine of the last disk driver that has been set up.
+
+When the interrupt handler of the driver finishes doing its work it invokes a routine named PRVINT provided as well by the MSX-DOS kernel they are attached to, which executes the previous interrupt routine as defined by slot ID + address in the appropriate HOKSAV entry. This causes all the interrupt routines to be executed in succession, starting with the one for the last disk driver.
+
+**In MSX-DOS 2** things are a little bit different. The SETINT and PRVINT routines are still available for the disk drivers, but the former will fill the corresponding HOKSAV entry with the slot ID and address of the interrupt routine for the driver that makes the call (instead of the current value of H.TIMI), and the later does nothing (but is still provided for compatibility).
+
+Thus this time each entry in HOKSAV holds the slot number and address of the **current** timer interrupt handler for each driver (the slot ID of the driver and the address that was passed to SETINT).
+
+In the case of MSX-DOS 2 H.TIMI ends up pointing to an internal routine in the DOS kernel code itself. This routine does some internal processing, then scans the HOKSAV table and "manually" invokes the interrupt routine for each entry, then jumps to the previous value of H.TIMI (the value that the hook had before the master disk controller was initialized).
+
+This is not the end of the story, though. Since disk drivers invoke SETINT and PRVINT _in their own kernels_ (not in the master controller), HOKSAV will end up having a mix of DOS 1 style entries ("previous hook") and DOS 2 entries ("current hook"). For this reason, what MSX-DOS 2 actually does when processing HOKSAV is to check the slot number in each entry against the slot number of the corresponding entry in DRVTBL, and only when both match is the interrupt routine invoked (if slot numbers are different it's a "previous hook" entry set by a driver on a DOS 1 kernel). The "previous hook" entries end up being invoked as well when the master DOS 2 kernel jumps to the previous value of H.TIMI.
+
+A last note: SETINT and PRVINT are provided as external symbols and resolved when the DOS kernel and the disk driver are linked to compose a full disk ROM, therefore they don't have a fixed address.
+
+Files Management
+----------------
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|F85Fh  |MAXFIL |1  |High legal file number
+|F860h  |FILTAB |2  |Starting address of of file data area
+|F862h  |NULBUF |2  |Points to file 0 buffer ( used in SAVE & LOAD st.)
+|F864h  |PTRFIL |2  |Points to file data of currently accessing file
+|FCBEh  |RUNBNF |1  |Flag for the BLOAD instruction. Set to 52 when a binary file has been executed. Set to 53 while loading VRAM data
+|F866h  |RUNFLG |1  |Non-zero when Basic program run after load
+|F866h  |FILNAM |11 |File name from Disk-Basic instruction used
+|F871h  |FILNM2 |11 |Second file name from Disk-Basic instruction used. (NAME, COPY, MOVE, etc)
+|F87Ch  |NLONLY |1  |When loading program. (0 = NON Basic / other = Basic)
+|F87Dh  |SAVEND |2  |End address specified in BSAVE
+|FCBFh  |SAVENT |1  |Start address for BSAVE / BLOAD operations
+
+Reserved areas
+--------------
+
+|Address| Name  |Length|Description|
+|:-----:|:-----:|:-----:|----------|
+|FFF8h  |       |2      |Reserved
+|FFFDh  |       |2      |Reserved
