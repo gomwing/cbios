@@ -91,10 +91,7 @@ AV Control Port
 
 |Address| Name |Length|Description|
 |:-----:|:----:|:----:|-----------|
-FAF7h
-AVCSAV
-1
-Copy of AV control port (#F7) content. (MSX2+\~)
+|FAF7h  |AVCSAV|1   |Copy of AV control port (#F7) content. (MSX2+\~)
 
 CIRCLE
 ------
